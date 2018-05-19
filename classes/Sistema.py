@@ -12,11 +12,6 @@ SCN = 1
 MDM = 2
 CD = 3
 
-PRONTO = 0
-EXECUTANDO = 1
-SUSPENSO = 2
-TERMINADO = 3
-
 class Sistema():
     # Construtor da classe.
     def __init__(self, totalRam=8192, totalImp=2, totalScn=1, totalMdm=1, totalCd=2):
