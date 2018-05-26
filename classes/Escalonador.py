@@ -1,6 +1,5 @@
 from classes import Processo as proc
 
-
 # Responsável pelo escalonamento (execução, suspensão e término) de processos.
 class Escalonador(object):
     def __init__(self, fTReal, fUs1, fUs2, fUs3):
@@ -13,33 +12,62 @@ class Escalonador(object):
         self.quantum = 2
 
     #Escalona um processo por um pedaço de tempo a cada vez que a função é chamada.
-    def escalona(self, p, i):
+    # def escalona(self, p, i):
+    #     self.pAtual = p
+    #     if (p.pegaEstado == p.PRONTO):
+    #         p.setaEstado = p.EXECUTANDO
+    #     if (p.tInicio == 0):
+    #         p.setaTempoInicio(self.tAtual)
+    #     p.tTotalProcesso += 1
+    #     self.tAtual += 1
+    #     #Se um processo de tempo real (prioridade 0) chegou a seu fim:
+    #     if (p.tTotalProcesso == p.processorTime):
+    #         p.setaTempoFim(self.tAtual)
+    #         p.setaEstado(p.TERMINADO) #Tem que fazer isso aqui.
+    #         if (p.pegaPrioridade() == 0): self.fTempoReal.pop(i)
+    #     #Para processos de usuário (prioridades 1-3):
+    #     else:
+    #         if (p.pegaPrioridade == 1):
+    #             self.fUsuarioP1.pop(i)
+    #             p.setaPrioridade(2)
+    #             if (p.tTotalProcesso != p.processorTime): self.fUsuarioP2.append(p)  #Adiciona na próxima fila (política de feedback)
+    #         elif (p.pegaPrioridade == 2):
+    #             self.fUsuarioP2.pop(i)
+    #             p.setaPrioridade(3)
+    #             if (p.tTotalProcesso != p.processorTime): self.fUsuarioP3.append(p)
+    #         elif (p.pegaPrioridade == 3):
+    #             self.fUsuarioP3.pop(i)
+    #             p.setaPrioridade(1)
+    #             if (p.tTotalProcesso != p.processorTime): self.fUsuarioP1.append(p)
+    #     print(p)
+    #     return p
+
+    def escalona(self, p, i, tAtual):
         self.pAtual = p
-        if (p.pegaEstado == 0):
-            p.setaEstado = 1
-        if (p.tInicio == 0):
-            p.setaTempoInicio(self.tAtual)
-        p.tTotalProcesso += 1
-        self.tAtual += 1
-        #Se um processo de tempo real (prioridade 0) chegou a seu fim:
+        if (p.pegaEstado == p.PRONTO):
+            p.setaEstado = p.EXECUTANDO
+            p.setaTempoInicio(tAtual)
+        self.tAtual = tAtual
+        #Se um processo chegou a seu fim:
         if (p.tTotalProcesso == p.processorTime):
-            p.setaTempoFim(self.tAtual)
-            p.setaEstado(4) #Tem que fazer isso aqui.
+            p.setaTempoFim(tAtual)
+            p.setaEstado(p.TERMINADO) #Tem que fazer isso aqui.
             if (p.pegaPrioridade() == 0): self.fTempoReal.pop(i)
         #Para processos de usuário (prioridades 1-3):
         else:
             if (p.pegaPrioridade == 1):
                 self.fUsuarioP1.pop(i)
                 p.setaPrioridade(2)
-                if (p.tTotalProcesso != p.processorTime): self.fUsuarioP2.append(p)  #Adiciona na próxima fila (política de feedback)
+                self.fUsuarioP2.append(p)  #Adiciona na próxima fila (política de feedback)
             elif (p.pegaPrioridade == 2):
                 self.fUsuarioP2.pop(i)
                 p.setaPrioridade(3)
-                if (p.tTotalProcesso != p.processorTime): self.fUsuarioP3.append(p)
+                self.fUsuarioP3.append(p)
             elif (p.pegaPrioridade == 3):
                 self.fUsuarioP3.pop(i)
                 p.setaPrioridade(1)
-                if (p.tTotalProcesso != p.processorTime): self.fUsuarioP1.append(p)
+                self.fUsuarioP1.append(p)
+        p.tTotalProcesso += 1
         print(p)
         return p
 

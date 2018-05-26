@@ -21,9 +21,14 @@ class Processo(object):
         self.SUSPENSO = 3
         self.TERMINADO = 4
 
+        self.__esFoiAlocada = False
+        self.__ramFoiAlocada = False
+
     # modelo do print de processo
     def __str__(self):
-        return "Id: " + str(self.pegaId()) #+ "\n" + \
+        return "Id: " + str(self.pegaId()) + "\nEstado atual: " + self.printEstado() + "\nTempo total do processo: " \
+               + str(self.tTotalProcesso) + "\nTempo de serviço: " + str(self.processorTime) + \
+               "\nMemória consumida (MBytes): " + str(self.pegaMemoriaOcupada()) #;+ "\n" + \
         #comentado so pra enxergar na hora de executar, senao fica confuso de ver
         # '''
         #        "Tempo de chegada: " + str(self.arrivalTime) + "\n" + \
@@ -91,4 +96,16 @@ class Processo(object):
     def pegaId(self):
         return self.id
 
+    def ramFoiAlocada(self):
+        return self.__ramFoiAlocada
+
+    def esFoiAlocada(self):
+        return self.__esFoiAlocada
+
     # print(fEntrada[0])
+
+    def setaEstadoAlocacaoRam(self, estado):
+        self.__ramFoiAlocada = estado
+
+    def setaEstadoAlocacaoES(self, estado):
+        self.__esFoiAlocada = estado

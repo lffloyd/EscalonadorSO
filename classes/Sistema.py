@@ -12,6 +12,11 @@ SCN = 1
 MDM = 2
 CD = 3
 
+PRONTO = 0
+EXECUTANDO = 1
+SUSPENSO = 2
+TERMINADO = 3
+
 class Sistema():
     # Construtor da classe.
     def __init__(self, totalRam=8192, totalImp=2, totalScn=1, totalMdm=1, totalCd=2):
@@ -55,142 +60,237 @@ class Sistema():
     def pegaRamUsada(self):
         return self.__ramUsada
 
-    #Manda um processo de uma das 4 listas para execução:
     def executa(self, esc):
         processo, pos = self.escolheProcesso(esc)
-        self.__tempoAtual += 1
         time.sleep(1)
         if (processo != None):
-            if (processo.pegaEstado() == processo.EXECUTANDO): processo = esc.escalona(processo, pos)
-            #As linhas seguintes deve ser alterada para prever momentos em que não há como executar E/S.
-            #Por enquanto ele deixa de executar um processo que não pode acessa E/S, mas deixao na memória (ou seja, bloqueia-o).
-
+            if (processo.pegaEstado() == processo.EXECUTANDO): processo = esc.escalona(processo, pos, self.__tempoAtual)
+            #As linhas seguintes devem ser alteradas para prever momentos em que não há como executar E/S.
+            #Por enquanto ele deixa de executar um processo que não pode acessa E/S, mas deixa-o na memória (ou seja, bloqueia-o).
             #As linhas comentadas devem ser descomentadas quando as funcionalidades de lista de prontos, lista de bloqueados
             # e etc. form devidamente implementadas.
             if (processo.pegaEstado() == processo.PRONTO):
                 ramAlocada, processo = self.alocaMemoria(processo)
                 if (ramAlocada):
-                    #self.listaProntos.remove(processo)
+                    #self.listaProntos.remove(procoesso)
                     esAlocado, processo = self.requisitaES(processo)
                     if esAlocado:
                         processo.setaEstado(processo.EXECUTANDO)
                         #self.listaExecutando.append(processo)
-                        processo = esc.escalona(processo, pos)
+                        processo = esc.escalona(processo, pos, self.__tempoAtual)
                     else:
                         processo.setaEstado(processo.BLOQUEADO)
                         #self.listaBloqueados.append(processo)
                         return False
             if (processo.pegaEstado() == processo.TERMINADO):
+                print("Processo " + processo.pegaId() + " terminado\n")
                 self.desalocaES(processo)
                 self.desalocaMemoria(processo)
+                if (processo.pegaPrioridade() == 0): esc.fTempoReal.pop(pos)
+                if (processo.pegaPrioridade() == 1): esc.fUsuarioP1.pop(pos)
+                if (processo.pegaPrioridade() == 2): esc.fUsuarioP2.pop(pos)
+                if (processo.pegaPrioridade() == 3): esc.fUsuarioP3.pop(pos)
                 #self.listaExecutando.remove(processo.setaEstado(processo.EXECUTANDO))
-                #self.listaTerminados.append(processo)
-            return True
+                self.listaTerminados.append(processo)
+        #    return True
+        #return False
+        self.__tempoAtual += 1
+
+    #Manda um processo de uma das 4 listas para execução:
+    # def executa(self, esc):
+    #     processo, pos = self.escolheProcesso(esc)
+    #     self.__tempoAtual += 1
+    #     time.sleep(1)
+    #     if (processo != None):
+    #         if (processo.pegaEstado() == processo.EXECUTANDO): processo = esc.escalona(processo, pos)
+    #         #As linhas seguintes devem ser alteradas para prever momentos em que não há como executar E/S.
+    #         #Por enquanto ele deixa de executar um processo que não pode acessa E/S, mas deixa-o na memória (ou seja, bloqueia-o).
+    #
+    #         #As linhas comentadas devem ser descomentadas quando as funcionalidades de lista de prontos, lista de bloqueados
+    #         # e etc. form devidamente implementadas.
+    #         if (processo.pegaEstado() == processo.PRONTO):
+    #             ramAlocada, processo = self.alocaMemoria(processo)
+    #             if (ramAlocada):
+    #                 #self.listaProntos.remove(processo)
+    #                 esAlocado, processo = self.requisitaES(processo)
+    #                 if esAlocado:
+    #                     processo.setaEstado(processo.EXECUTANDO)
+    #                     #self.listaExecutando.append(processo)
+    #                     processo = esc.escalona(processo, pos)
+    #                 else:
+    #                     processo.setaEstado(processo.BLOQUEADO)
+    #                     #self.listaBloqueados.append(processo)
+    #                     return False
+    #         if (processo.pegaEstado() == processo.TERMINADO):
+    #             print("Processo " + processo.pegaId() + "terminado\n")
+    #             self.desalocaES(processo)
+    #             self.desalocaMemoria(processo)
+    #             #self.listaExecutando.remove(processo.setaEstado(processo.EXECUTANDO))
+    #             #self.listaTerminados.append(processo)
+    #         return True
+    #     return False
+
+    # def escolheProcesso(self, esc):
+    #     proc = None
+    #     pos = -1
+    #     escolhido = False
+    #     while (not escolhido):
+    #         for i in range(len(esc.fTempoReal)):
+    #             proc = esc.fTempoReal[i]
+    #             pos = i
+    #             escolhido = True
+    #             break
+    #         for i in range(len(esc.fUsuarioP1)):
+    #             proc = esc.fUsuarioP1[i]
+    #             pos = i
+    #             escolhido = True
+    #             break
+    #         for i in range(len(esc.fUsuarioP2)):
+    #             proc = esc.fUsuarioP2[i]
+    #             pos = i
+    #             escolhido = True
+    #             break
+    #         for i in range(len(esc.fUsuarioP3)):
+    #             proc = esc.fUsuarioP3[i]
+    #             pos = i
+    #             escolhido = True
+    #             break
+    #     return proc, pos
+
 
     #Escolhe um processo a ser executado dentre todas as listas (se houver(em)):
+    # def escolheProcesso(self, esc):
+    #     escolhido = False
+    #     pos = -1
+    #     proc = None
+    #     if (not escolhido) and (len(esc.fTempoReal) != 0):
+    #         for i in range(len(esc.fTempoReal)):
+    #             proc = esc.fTempoReal[i]
+    #             pos = i
+    #             if (proc.pegaTempoChegada() <= self.__tempoAtual):
+    #                 escolhido = True
+    #                 break
+    #     elif (not escolhido) and (len(esc.fUsuarioP1) != 0):
+    #         for i in range(len(esc.fUsuarioP1)):
+    #             proc = esc.fUsuarioP1[i]
+    #             pos = i
+    #             if (proc.pegaTempoChegada() <= self.__tempoAtual):
+    #                 escolhido = True
+    #                 break
+    #     elif (not escolhido) and (len(esc.fUsuarioP2) != 0):
+    #         for i in range(len(esc.fUsuarioP2)):
+    #             proc = esc.fUsuarioP2[i]
+    #             pos = i
+    #             if (proc.pegaTempoChegada() <= self.__tempoAtual):
+    #                 escolhido = True
+    #                 break
+    #     elif (not escolhido) and (len(esc.fUsuarioP3) != 0):
+    #         for i in range(len(esc.fUsuarioP3)):
+    #             proc = esc.fUsuarioP3[i]
+    #             pos = i
+    #             if (proc.pegaTempoChegada() <= self.__tempoAtual):
+    #                 escolhido = True
+    #                 break
+    #     return proc, pos
+
     def escolheProcesso(self, esc):
-        escolhido = False
-        pos = -1
-        proc = None
-        if (not escolhido) and (len(esc.fTempoReal) != 0):
+        if (len(esc.fTempoReal) != 0):
             for i in range(len(esc.fTempoReal)):
-                proc = esc.fTempoReal[i]
-                pos = i
-                if (proc.pegaTempoChegada() <= self.__tempoAtual):
-                    escolhido = True
-                    break
-        elif (not escolhido) and (len(esc.fUsuarioP1) != 0):
+                if (esc.fTempoReal[i].pegaTempoChegada() <= self.__tempoAtual):
+                    return esc.fTempoReal[i], i
+        if (len(esc.fUsuarioP1) != 0):
             for i in range(len(esc.fUsuarioP1)):
-                proc = esc.fUsuarioP1[i]
-                pos = i
-                if (proc.pegaTempoChegada() <= self.__tempoAtual):
-                    escolhido = True
-                    break
-        elif (not escolhido) and (len(esc.fUsuarioP2) != 0):
+                if (esc.fUsuarioP1[i].pegaTempoChegada() <= self.__tempoAtual):
+                    return esc.fUsuarioP1[i], i
+        if (len(esc.fUsuarioP2) != 0):
             for i in range(len(esc.fUsuarioP2)):
-                proc = esc.fUsuarioP1[i]
-                pos = i
-                if (proc.pegaTempoChegada() <= self.__tempoAtual):
-                    escolhido = True
-                    break
-        elif (not escolhido) and (len(esc.fUsuarioP3) != 0):
+                if (esc.fUsuarioP2[i].pegaTempoChegada() <= self.__tempoAtual):
+                    return esc.fUsuarioP2[i], i
+        if (len(esc.fUsuarioP3) != 0):
             for i in range(len(esc.fUsuarioP3)):
-                proc = esc.fUsuarioP1[i]
-                pos = i
-                if (proc.pegaTempoChegada() <= self.__tempoAtual):
-                    escolhido = True
-                    break
-        return proc, pos
+                if (esc.fUsuarioP3[i].pegaTempoChegada() <= self.__tempoAtual):
+                    return esc.fUsuarioP3[i], i
+        return None, -1
 
     # Aloca memória RAM a um processo.
     def alocaMemoria(self, processo):
-        if (processo.pegaEstado() == processo.PRONTO):
-            if (processo.pegaMemoriaOcupada() + self.__ramUsada) < self.__totalRAM:
-                self.__ramUsada += processo.pegaMemoriaOcupada()
-                return True, processo
-            print("Erro ao tentar alocar RAM: processo " + processo.pegaId())
-            return False, processo
-
+        if (not processo.ramFoiAlocada()):
+            if (processo.pegaEstado() == processo.PRONTO):
+                if (processo.pegaMemoriaOcupada() + self.__ramUsada) <= self.__totalRAM:
+                    self.__ramUsada += processo.pegaMemoriaOcupada()
+                    processo.setaEstadoAlocacaoRam(True)
+                    return True, processo
+                print("Erro ao tentar alocar RAM: processo " + processo.pegaId())
+                return False, processo
 
     # Operação simétrica à anterior.
     def desalocaMemoria(self, processo):
-        if (processo.pegaEstado() == 1) or (processo.pegaEstado() == processo.SUSPENSO):
-                self.__ramUsada -= processo.pegaMemoriaOcupada()
-                return True, processo
-        # Executar método do Escalonador para trocar o processo de listas (acredito).
-        else:
-            print("Erro ao tentar desalocar RAM: processo " + processo.pegaId())
-            return False, processo
+        if (processo.ramFoiAlocada()):
+            if (processo.pegaEstado() == processo.TERMINADO) or (processo.pegaEstado() == processo.SUSPENSO):
+                if ((self.__ramUsada - processo.pegaMemoriaOcupada()) >= 0):
+                    self.__ramUsada -= processo.pegaMemoriaOcupada()
+                    processo.setaEstadoAlocacaoRam(False)
+                    return True, processo
+            # Executar método do Escalonador para trocar o processo de listas (acredito).
+                else:
+                    print("Erro ao tentar desalocar RAM: processo " + processo.pegaId())
+                    return False, processo
+            else: return False, processo
 
     # Aloca recursos de E/S de um processo:
     def requisitaES(self, processo):
-        listaES = processo.pegaNumDePerifericos()
-        if processo.pegaEstado() == 0:
-            try:
+        if (not processo.esFoiAlocada()):
+            listaES = processo.pegaNumDePerifericos()
+            print("Lista E/S do processo " + processo.pegaId())
+            print(listaES)
+            if processo.pegaEstado() == processo.PRONTO:
                 seraBloqueado = False
                 if listaES[IMP] != 0:
-                    if len(self.__matrizES[IMP]) < (len(self.__matrizES[IMP]) + listaES[IMP]):
+                    if len(self.__matrizES[IMP]) <= (len(self.__matrizES[IMP]) + listaES[IMP]):
                         for i in range(listaES[IMP]): self.__matrizES[IMP].append(processo.pegaId() + "_" + str(i))
                     else:
                         seraBloqueado = True
                 if listaES[SCN] != 0:
-                    if len(self.__matrizES[SCN]) < (len(self.__matrizES[SCN]) + listaES[SCN]):
+                    if len(self.__matrizES[SCN]) <= (len(self.__matrizES[SCN]) + listaES[SCN]):
                         for i in range(listaES[SCN]): self.__matrizES[SCN].append(processo.pegaId() + "_" + str(i))
                     else:
                         seraBloqueado = True
                 if listaES[MDM] != 0:
-                    if len(self.__matrizES[MDM]) < (len(self.__matrizES[MDM]) + listaES[MDM]):
+                    if len(self.__matrizES[MDM]) <= (len(self.__matrizES[MDM]) + listaES[MDM]):
                         for i in range(listaES[MDM]): self.__matrizES[MDM].append(processo.pegaId() + "_" + str(i))
                     else:
                         seraBloqueado = True
                 if listaES[CD] != 0:
-                    if len(self.__matrizES[CD]) < len(self.__matrizES[CD]) + listaES[CD]:
+                    if len(self.__matrizES[CD]) <= len(self.__matrizES[CD]) + listaES[CD]:
                         for i in range(listaES[CD]): self.__matrizES[CD].append(processo.pegaId() + "_" + str(i))
                     else:
                         seraBloqueado = True
                 if seraBloqueado:
-                    processo.setaEstado(processo.BLOQUEADO)
+                    # processo.setaEstado(processo.BLOQUEADO)
+                    print("Erro em requisição de E/S: processo " + processo.pegaId())
                     return False, processo
                 else:
+                    processo.setaEstadoAlocacaoES(True)
                     return True, processo
-            except:
-                print("Erro em requisição de E/S: processo " + processo.pegaId())
+
 
     # Desaloca recursos de E/S de um processo:
     def desalocaES(self, processo):
-        listaES = processo.pegaNumDePerifericos()
-        if processo.pegaEstado() == processo.EXECUTANDO:
-            try:
-                if listaES[IMP] != 0:
-                    for i in range(listaES[IMP]): self.__matrizES[IMP].remove(processo.pegaId() + "_" + str(i))
-                if listaES[SCN] != 0:
-                    for i in range(listaES[SCN]): self.__matrizES[SCN].remove(processo.pegaId() + "_" + str(i))
-                if listaES[MDM] != 0:
-                    for i in range(listaES[MDM]): self.__matrizES[MDM].remove(processo.pegaId() + "_" + str(i))
-                if listaES[CD] != 0:
-                    for i in range(listaES[CD]): self.__matrizES[CD].remove(processo.pegaId() + "_" + str(i))
-            except:
-                print("Erro em desalocação de E/S: processo " + processo.pegaId())
+        if (processo.esFoiAlocada()):
+            listaES = processo.pegaNumDePerifericos()
+            if (processo.pegaEstado() == processo.TERMINADO) or (processo.pegaEstado() == processo.SUSPENSO):
+                try:
+                    if listaES[IMP] != 0:
+                        for i in range(listaES[IMP]): self.__matrizES[IMP].remove(processo.pegaId() + "_" + str(i))
+                    if listaES[SCN] != 0:
+                        for i in range(listaES[SCN]): self.__matrizES[SCN].remove(processo.pegaId() + "_" + str(i))
+                    if listaES[MDM] != 0:
+                        for i in range(listaES[MDM]): self.__matrizES[MDM].remove(processo.pegaId() + "_" + str(i))
+                    if listaES[CD] != 0:
+                        for i in range(listaES[CD]): self.__matrizES[CD].remove(processo.pegaId() + "_" + str(i))
+                    processo.setaEstadoAlocacaoES(False)
+                except:
+                    print("Erro em desalocação de E/S: processo " + processo.pegaId())
 
     #Retorna a qtd. de dispositivos E/S livres:
     def dispositivosESLivres(self, cod):
@@ -210,3 +310,7 @@ class Sistema():
     #Retorna a qtd. de RAM livre:
     def pegaMemoriaLivre(self):
         return self.__totalRAM - self.__ramUsada
+
+    #Retorna o tempo atual do sistema:
+    def pegaTempoAtual(self):
+        return self.__tempoAtual
