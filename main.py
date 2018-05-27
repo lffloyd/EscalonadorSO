@@ -18,7 +18,7 @@ class EscDeProcessos:
         #Iniciadores das classes
         self.sist = Sistema()
         self.arq = "processos.txt"
-        self.desp = Despachante(self.arq)
+        self.desp = Despachante(self.arq, self.sist.pegaTotalRam())
         self.esc = Escalonador(self.desp.pegafTempoReal(), self.desp.pegafUsuarioP1(), self.desp.pegafUsuarioP2(), self.desp.pegafUsuarioP3())
         self.termAux = 0
         self.pausado = FALSE
@@ -192,7 +192,7 @@ class EscDeProcessos:
     #função relacionada ao botão escolherArquivo
     def escolherArq(self):
         self.arq = fileChooser()    #abre a busca de arquivos do sistema
-        self.desp = Despachante(self.arq)   #cria o despachante após escolher o arquivo
+        self.desp = Despachante(self.arq, self.sist.pegaTotalRam())   #cria o despachante após escolher o arquivo
 
     #função relacionada ao botão de executar o sistema
     def escalonarProcessos(self, event):
@@ -222,9 +222,9 @@ class EscDeProcessos:
         #atualizador da barra
         self.memBar["value"] = self.sist.pegaRamUsada()
         self.porcentBar["text"] = self.percentMem()
-        if (self.memBar["value"] >= 0.9*8192):
+        if (self.memBar["value"] >= 0.9*self.sist.pegaTotalRam()):
             self.memBar["style"] = "red.Horizontal.TProgressbar"
-        if (self.memBar["value"] < 0.9*8192):
+        if (self.memBar["value"] < 0.9*self.sist.pegaTotalRam()):
             self.memBar["style"] = ""
 
         #executa uma iteração do escalonamento

@@ -4,7 +4,8 @@ from classes import Processo as proc
 # from classes.Processo import *
 
 class Despachante():
-    def __init__(self, arqProcessos):
+    def __init__(self, arqProcessos, totalRamSistema):
+        self.__totalRAMSistema = totalRamSistema
         self.fEntrada = []
         self.fTempoReal = []
         self.fUsuarioP1 = []
@@ -24,7 +25,8 @@ class Despachante():
             novo = proc.Processo(int(processoAtual[0]), int(processoAtual[1]), int(processoAtual[2]), int(processoAtual[3]),
                            int(processoAtual[4]), int(processoAtual[5]), int(processoAtual[6]), int(processoAtual[7]),
                             0, 0, 0, 0)
-            self.fEntrada.append(novo)
+            if (self.verificaProcesso(novo)): self.fEntrada.append(novo)
+        self.criaID(self.fEntrada)
 
     # def leArq(self):
     #     # copia o arquivo p/ a lista
@@ -41,7 +43,7 @@ class Despachante():
 
     #atualizado pra funcionar com "listaPerifericos"
     def verificaProcesso(self, processo):
-        if ((processo.pegaMemoriaOcupada() > 8192) or (processo.listaPerifericos[0] > 2) or (processo.listaPerifericos[1] > 1) or
+        if ((processo.pegaMemoriaOcupada() > self.__totalRAMSistema) or (processo.listaPerifericos[0] > 2) or (processo.listaPerifericos[1] > 1) or
             (processo.listaPerifericos[2] > 1) or (processo.listaPerifericos[3] > 2) or (processo.pegaMemoriaOcupada() < 0) or
             (processo.listaPerifericos[0] < 0) or (processo.listaPerifericos[1] < 0) or (processo.listaPerifericos[2] < 0)
             or (processo.listaPerifericos[3] < 0)):
@@ -75,17 +77,15 @@ class Despachante():
     #             print("PROCESSO INVÁLIDO")
 
     def submeteProcesso(self):
-        self.criaID(self.fEntrada)
         for i in self.fEntrada:
-            if (self.verificaProcesso(i)):
-                if (i.priority == 0):
-                    self.fTempoReal.append(i)
-                elif (i.priority == 1):
-                    self.fUsuarioP1.append(i)
-                elif (i.priority == 2):
-                    self.fUsuarioP2.append(i)
-                elif (i.priority == 3):
-                    self.fUsuarioP3.append(i)
+            if (i.priority == 0):
+                self.fTempoReal.append(i)
+            elif (i.priority == 1):
+                self.fUsuarioP1.append(i)
+            elif (i.priority == 2):
+                self.fUsuarioP2.append(i)
+            elif (i.priority == 3):
+                self.fUsuarioP3.append(i)
         self.fTempoReal.sort(key=lambda x: x.arrivalTime)
         for i in range(len(self.fTempoReal)):
             print("ordem:", i, self.fTempoReal[i].pegaId())

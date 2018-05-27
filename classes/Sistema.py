@@ -87,9 +87,9 @@ class Sistema():
                 self.desalocaES(processo)
                 self.desalocaMemoria(processo)
                 if (processo.pegaPrioridade() == 0): esc.fTempoReal.pop(pos)
-                if (processo.pegaPrioridade() == 1): esc.fUsuarioP1.pop(pos)
-                if (processo.pegaPrioridade() == 2): esc.fUsuarioP2.pop(pos)
-                if (processo.pegaPrioridade() == 3): esc.fUsuarioP3.pop(pos)
+                elif (processo.pegaPrioridade() == 1): esc.fUsuarioP1.pop(pos)
+                elif (processo.pegaPrioridade() == 2): esc.fUsuarioP2.pop(pos)
+                else: esc.fUsuarioP3.pop(pos)
                 #self.listaExecutando.remove(processo.setaEstado(processo.EXECUTANDO))
                 self.listaTerminados.append(processo)
         #    return True
