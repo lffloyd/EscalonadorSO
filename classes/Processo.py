@@ -3,31 +3,43 @@ import random
 class Processo(object):
     def __init__(self, arrivalTime, priority, processorTime, memoriaRam, impressoras, scanners, modems,
                  CDs, tInicio, tTotalProcesso, tTotalSuspenso, estado):
-        self.arrivalTime = arrivalTime
-        self.priority = priority
-        self.processorTime = processorTime
-        self.memoriaRam = memoriaRam
-        self.listaPerifericos = [impressoras, scanners, modems, CDs]
-        self.tInicio = tInicio
-        self.tTotalProcesso = tTotalProcesso
-        self.tTotalSuspenso = tTotalSuspenso
-        self.estado = estado
-        self.id = ""
+        self.__arrivalTime = arrivalTime
+        self.__priority = priority
+        self.__processorTime = processorTime
+        self.__memoriaRam = memoriaRam
+        self.__listaPerifericos = [impressoras, scanners, modems, CDs]
+        self.__tInicio = tInicio
+        self.__tTotalProcesso = tTotalProcesso
+        self.__tTotalSuspenso = tTotalSuspenso
+        self.__estado = estado
+        self.__id = ""
+        self._quantumsFeitos = 0
 
         # Constantes de estado do processo.
-        self.PRONTO = 0
-        self.EXECUTANDO = 1
-        self.BLOQUEADO = 2
-        self.SUSPENSO = 3
-        self.TERMINADO = 4
+        self.NOVO = 0
+        self.PRONTO = 1
+        self.EXECUTANDO = 2
+        self.BLOQUEADO = 3
+        self.SUSPENSO = 4
+        self.TERMINADO = 5
 
         self.__esFoiAlocada = False
         self.__ramFoiAlocada = False
 
+    #Função de comparação usada pela classe. Usada no método "list.remove(obj)" para identificar um objeto.
+    def __cmp__(self, other):
+        return self.__eq__(other)
+
+    #Método de comparação de equivalência da classe. Compara apenas o "id" (que único) do objeto.
+    def __eq__(self, other):
+        #Checa se "other" é instância de Processo.
+        if isinstance(other, self.__class__): return self.__id == other.pegaId()
+        return False
+
     # modelo do print de processo
     def __str__(self):
-        return "Id: " + str(self.pegaId()) + "\nEstado atual: " + self.printEstado() + "\nTempo total do processo: " \
-               + str(self.tTotalProcesso) + "\nTempo de serviço: " + str(self.processorTime) + \
+        return "Id: " + str(self.pegaId()) + "\nEstado atual: " + self.stringEstado() + "\nTempo total do processo: " \
+               + str(self.__tTotalProcesso) + "\nTempo de serviço: " + str(self.__processorTime) + \
                "\nMemória consumida (MBytes): " + str(self.pegaMemoriaOcupada()) #;+ "\n" + \
         #comentado so pra enxergar na hora de executar, senao fica confuso de ver
         # '''
@@ -45,56 +57,65 @@ class Processo(object):
         #        "Estado atual: " + self.printEstado()
         # '''
 
-    #printar o estado do processo, em vez de printar 0,1,2,3
-    def printEstado(self):
-        if (self.estado == 0):
+    #Mostra uma 'string' indicando o estado do processo em vez de printar 0,1,2,3
+    def stringEstado(self):
+        if (self.__estado == 0):
+            return "novo\n"
+        elif (self.__estado == 1):
             return "pronto\n"
-        elif (self.estado == 1):
+        elif (self.__estado == 2):
             return "executando\n"
-        elif (self.estado == 2):
+        elif (self.__estado == 3):
+            return "bloqueado\n"
+        elif (self.__estado == 4):
             return "suspenso\n"
         else:
-            return "bloqueado\n"
+            return "terminado\n"
 
+    #Diversas funções "get"/"set":
     def pegaEstado(self):
-        return self.estado
+        return self.__estado
 
     def setaEstado(self, estado):
-        self.estado = estado
-        #suspesno ou bloqueado?
-        if (estado == -1):
-            print("Processo não está pronto\n")
-        elif (estado == 0):
-            print("Processo está pronto\n")
+        self.__estado = estado
+        #suspenso ou bloqueado?
+        # if (estado == 0):
+        #     print("Processo não está pronto\n")
+        # elif (estado == 1):
+        #     print("Processo está pronto\n")
 
     def pegaPrioridade(self):
-        return self.priority
+        return self.__priority
 
-    def setaPrioriade(self, p):
-        self.priority = p
+    def setaPrioridade(self, p):
+        self.__priority = p
 
     def pegaTempoChegada(self):
-        return self.arrivalTime
+        return self.__arrivalTime
 
-    def pegaMemoriaOcupada(self): return self.memoriaRam
+    def pegaMemoriaOcupada(self):
+        return self.__memoriaRam
 
     def setaTempoInicio(self, tInicio):
-        self.tInicio = tInicio
+        self.__tInicio = tInicio
+
+    def pegaTempoInicio(self):
+        return self.__tInicio
 
     def setaTempoFim(self, tFim):
-        self.tFim = tFim
+        self.__tFim = tFim
 
     def pegaTempoFim(self):
-        return self.tFim
+        return self.__tFim
 
     def pegaNumDePerifericos(self):
-        return self.listaPerifericos
+        return self.__listaPerifericos
 
     def setaId(self, novoId):
-        self.id = novoId
+        self.__id = novoId
 
     def pegaId(self):
-        return self.id
+        return self.__id
 
     def ramFoiAlocada(self):
         return self.__ramFoiAlocada
@@ -102,10 +123,26 @@ class Processo(object):
     def esFoiAlocada(self):
         return self.__esFoiAlocada
 
-    # print(fEntrada[0])
-
     def setaEstadoAlocacaoRam(self, estado):
         self.__ramFoiAlocada = estado
 
     def setaEstadoAlocacaoES(self, estado):
         self.__esFoiAlocada = estado
+
+    def pegaTempoTotal(self):
+        return self.__tTotalProcesso
+
+    def incrementaTempoTotal(self, inc):
+        self.__tTotalProcesso += inc
+
+    def pegaQuantums(self):
+        return self._quantumsFeitos
+
+    def setaQuantums(self, valor):
+        self._quantumsFeitos = valor
+
+    def incrementaQuantums(self, inc):
+        self._quantumsFeitos += inc
+
+    def pegaTempoDeServico(self):
+        return self.__processorTime
