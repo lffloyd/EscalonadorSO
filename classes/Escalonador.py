@@ -15,16 +15,15 @@ class Escalonador(object):
     #Responsável por escalonar um processo. Emprega "round robin" (fila de TR) e "feedback" (filas de prioridade de usuário) para isso.
     def escalona(self, p, i, tAtual):
         self.pAtual = p
-        # if (p.pegaEstado() == p.PRONTO):
-        #     p.setaEstado(p.EXECUTANDO)
-        #     p.setaTempoInicio(tAtual)
         self.tAtual = tAtual
         if (p.pegaEstado() == p.EXECUTANDO):
             #Atualiza o tempo de duração do processo:
-            p.incrementaTempoTotal(1)
+            #p.incrementaTempoTotal(1)
             #Se um processo chegou a seu fim:
             if p.pegaId() == "T2": print("The spice must flow\n")
-            if ((p.pegaTempoTotal()-1) == p.pegaTempoDeServico()) or (p.pegaTempoTotal() == p.pegaTempoDeServico()):
+            p.incrementaTempoDeExecucao(1)
+            #if ((p.pegaTempoTotalExecutando()-1) == p.pegaTempoDeServico()) or (p.pegaTempoTotalExecutando() == p.pegaTempoDeServico()):
+            if ((p.pegaTempoTotalExecutando() - 1) == p.pegaTempoDeServico()):
                 if p.pegaId() == "T2": print("I must not fear. Fear is the mindkiller.\n")
                 p.setaTempoFim(tAtual)
                 p.setaEstado(p.TERMINADO)

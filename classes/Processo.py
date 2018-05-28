@@ -11,6 +11,7 @@ class Processo(object):
         self.__tInicio = tInicio
         self.__tTotalProcesso = tTotalProcesso
         self.__tTotalSuspenso = tTotalSuspenso
+        self.__tTotalExecutandoProcesso = 0
         self.__estado = estado
         self.__id = ""
         self._quantumsFeitos = 0
@@ -39,7 +40,7 @@ class Processo(object):
     # modelo do print de processo
     def __str__(self):
         return "Id: " + str(self.pegaId()) + "\nEstado atual: " + self.stringEstado() + "\nTempo total do processo: " \
-               + str(self.__tTotalProcesso) + "\nTempo de serviço: " + str(self.__processorTime) + \
+               + str(self.__tTotalExecutandoProcesso) + "\nTempo de serviço: " + str(self.__processorTime) + \
                "\nMemória consumida (MBytes): " + str(self.pegaMemoriaOcupada()) #;+ "\n" + \
         #comentado so pra enxergar na hora de executar, senao fica confuso de ver
         # '''
@@ -108,6 +109,9 @@ class Processo(object):
     def pegaTempoFim(self):
         return self.__tFim
 
+    def atualizaTempoTotalDeDuracao(self):
+        self.__tTotalProcesso = self.__tFim - self.__tInicio
+
     def pegaNumDePerifericos(self):
         return self.__listaPerifericos
 
@@ -131,6 +135,12 @@ class Processo(object):
 
     def pegaTempoTotal(self):
         return self.__tTotalProcesso
+
+    def pegaTempoTotalExecutando(self):
+        return self.__tTotalExecutandoProcesso
+
+    def incrementaTempoDeExecucao(self, inc):
+        self.__tTotalExecutandoProcesso += inc
 
     def incrementaTempoTotal(self, inc):
         self.__tTotalProcesso += inc
