@@ -27,8 +27,7 @@ class Escalonador(object):
             if ((p.pegaTempoTotal()-1) == p.pegaTempoDeServico()) or (p.pegaTempoTotal() == p.pegaTempoDeServico()):
                 if p.pegaId() == "T2": print("I must not fear. Fear is the mindkiller.\n")
                 p.setaTempoFim(tAtual)
-                p.setaEstado(p.TERMINADO) #Tem que fazer isso aqui.
-                #if (p.pegaPrioridade() == 0): self.filas[self.TR].remove(p)
+                p.setaEstado(p.TERMINADO)
             #Para processos de usuário (prioridades 1-3):
             else:
                 #Filas de prioridade de usuário. Seguem a política de escalonanamento "feedback", usando quantum = 2.
@@ -53,6 +52,7 @@ class Escalonador(object):
                         p.setaPrioridade(1)
                         self.filas[self.U1].append(p)
         print(p)
+        if (self.pAtual.pegaEstado() == self.pAtual.TERMINADO): self.pAtual = None
         return p
 
     #Seleciona um determinado processo de uma das filas de prioridade conforme o parâmetro passado como índice para a função:
