@@ -161,21 +161,21 @@ class EscDeProcessos:
             self.create_window(aux)
 
     def listasAtuais(self):
-        texto = "Executando de Tempo real: "
-        for p in self.esc.fTempoReal:
-            if (p.arrivalTime <= self.sist.pegaTempo()):
+        texto = "Proc. em exec. de Tempo Real: "
+        for p in self.esc.filas[self.esc.TR]:
+            if (p.pegaTempoChegada() <= self.sist.pegaTempo()):
                 texto += str(p.pegaId()+" - ")
-        texto += "\n Executando de Prioridade 1: "
-        for p in self.esc.fUsuarioP1:
-            if (p.arrivalTime <= self.sist.pegaTempo()):
+        texto += "\nProc. em exec. de Prioridade 1: "
+        for p in self.esc.filas[self.esc.U1]:
+            if (p.pegaTempoChegada() <= self.sist.pegaTempo()):
                 texto += str(p.pegaId()+" - ")
-        texto += "\n Executando de Prioridade 2: "
-        for p in self.esc.fUsuarioP2:
-            if (p.arrivalTime <= self.sist.pegaTempo()):
+        texto += "\nProc. em exec. de Prioridade 2: "
+        for p in self.esc.filas[self.esc.U2]:
+            if (p.pegaTempoChegada() <= self.sist.pegaTempo()):
                 texto += str(p.pegaId()+" - ")
-        texto += "\n Executando de Prioridade 3: "
-        for p in self.esc.fUsuarioP3:
-            if (p.arrivalTime <= self.sist.pegaTempo()):
+        texto += "\nProc. em exec. de Prioridade 3: "
+        for p in self.esc.filas[self.esc.U3]:
+            if (p.pegaTempoChegada() <= self.sist.pegaTempo()):
                 texto += str(p.pegaId()+" - ")
         return texto
 
@@ -209,13 +209,16 @@ class EscDeProcessos:
         #atualizadores dos textos
         self.mem["text"] = "Memória disponível: "+str(self.sist.pegaRamUsada())+"MB usados de "+\
                            str(self.sist.pegaTotalRam())+"MB"
-        self.tempo["text"] = "Tempo percorrido: " + str(self.esc.tAtual or self.sist.pegaTempo()) + "s"
+        #self.tempo["text"] = "Tempo percorrido: " + str(self.sist.pegaTempo() / (60*60)) + ":" + \
+        #                     "" + str((self.sist.pegaTempo() % (60*60)) / (60)) + ":" + \
+        #                     "" + str((self.sist.pegaTempo() % (60*60)) % (60))
+        self.tempo["text"] = "Tempo percorrido: " + str(self.sist.pegaTempo()) + "s"
         self.pAtual["text"] ="Processo Atual: "+str(self.esc.pAtual)
         self.impDisp["text"] = "Impressoras disponíveis: " + str(self.sist.dispositivosESLivres(0))
         self.scnDisp["text"] = "Scanners disponíveis: " + str(self.sist.dispositivosESLivres(1))
         self.mdmDisp["text"] = "Modems disponíveis: " + str(self.sist.dispositivosESLivres(2))
         self.cdDisp["text"] = "Drives de CD disponíveis: " + str(self.sist.dispositivosESLivres(3))
-
+        # Aloca recursos de E/S de um processo:
         self.addTerminados()
         self.listasExecutando["text"]=self.listasAtuais()
 
@@ -232,7 +235,6 @@ class EscDeProcessos:
         root.update()
         global AFTER
         AFTER = root.after(100, self.atualizaDados)
-
 
 #funçoes para o funcionamento e criação da janela
 root = Tk()
