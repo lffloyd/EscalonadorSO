@@ -26,6 +26,16 @@ class Processo(object):
         self.__esFoiAlocada = False
         self.__ramFoiAlocada = False
 
+    #Função de comparação usada pela classe. Usada no método "list.remove(obj)" para identificar um objeto.
+    def __cmp__(self, other):
+        return self.__eq__(other)
+
+    #Método de comparação de equivalência da classe. Compara apenas o "id" (que único) do objeto.
+    def __eq__(self, other):
+        #Checa se "other" é instância de Processo.
+        if isinstance(other, self.__class__): return self.__id == other.pegaId()
+        return False
+
     # modelo do print de processo
     def __str__(self):
         return "Id: " + str(self.pegaId()) + "\nEstado atual: " + self.stringEstado() + "\nTempo total do processo: " \

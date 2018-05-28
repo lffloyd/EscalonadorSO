@@ -96,7 +96,7 @@ class Sistema():
         proc, pos = self.escolheProcesso(esc)
         time.sleep(0.5)
         if (proc != None):
-            if (proc.pegaEstado() == proc.EXECUTANDO): processo = esc.escalona(proc, pos, self.__tempoAtual)
+            if (proc.pegaEstado() == proc.EXECUTANDO): proc = esc.escalona(proc, pos, self.__tempoAtual)
             #As linhas seguintes devem ser alteradas para prever momentos em que não há como executar E/S.
             #Por enquanto ele deixa de executar um processo que não pode acessa E/S, mas deixa-o na memória (ou seja, bloqueia-o).
             #As linhas comentadas devem ser descomentadas quando as funcionalidades de lista de prontos, lista de bloqueados
@@ -104,10 +104,14 @@ class Sistema():
             if (proc.pegaEstado() == proc.PRONTO):
                 self.requisitaES(proc)
                 if (proc.esFoiAlocada()):
+                    self.listaProntos.remove(proc)
+
                     proc.setaEstado(proc.EXECUTANDO)
-                    # self.listaExecutando.append(processo)
+                    proc.setaTempoInicio(self.__tempoAtual)
+                    self.listaExecutando.append(proc)
                     proc = esc.escalona(proc, pos, self.__tempoAtual)
                 else:
+                    self.listaProntos.remove(proc)
                     proc.setaEstado(proc.BLOQUEADO)
                     self.listaBloqueados.append(proc)
                     return False
@@ -115,11 +119,8 @@ class Sistema():
                 print("Processo " + proc.pegaId() + " terminado\n")
                 self.desalocaES(proc)
                 self.desalocaMemoria(proc)
-                if (proc.pegaPrioridade() == 0): esc.filas[esc.TR].pop(pos)
-                elif (proc.pegaPrioridade() == 1): esc.filas[esc.U1].pop(pos)
-                elif (proc.pegaPrioridade() == 2): esc.filas[esc.U2].pop(pos)
-                else: esc.filas[esc.U3].pop(pos)
-                #self.listaExecutando.remove(processo.setaEstado(processo.EXECUTANDO))
+                esc.filas[proc.pegaPrioridade()].remove(proc)
+                self.listaExecutando.remove(proc)
                 self.listaTerminados.append(proc)
         self.__tempoAtual += 1
 
