@@ -114,6 +114,7 @@ class Sistema():
                     else: break
         return None, -1
 
+    #Atualiza o estado de um processo conforme suas demandas por RAM e E/S são atendidas num dado momento.
     def atualizaEstado(self, pr):
         if (pr.pegaEstado() == pr.BLOQUEADO):
             self.requisitaES(pr)
@@ -138,6 +139,7 @@ class Sistema():
                             break
         return pr
 
+    #Ordena a alocação de dispositivos E/S a um processo e a transferência desse processo entre filas de prioridade.
     def alocaESEReorganiza(self, processo):
         if (processo.pegaEstado() == processo.SUSPENSO): self.listaSuspensos.remove(processo)
         self.requisitaES(processo)

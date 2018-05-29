@@ -136,20 +136,20 @@ class EscDeProcessos:
     def create_window(self, processo):
         win = Toplevel(root)
         for i in self.sist.listaTerminados:
-            if(processo == i.id):
-                message ="Tempo de chegada: " + str(i.arrivalTime) + "\n" + \
-                "Prioridade: " + str(i.priority) + "\n" + \
-                "Tempo de serviço: " + str(i.processorTime) + "\n" + \
+            if (processo == i.pegaId()):
+                message ="Tempo de chegada: " + str(i.pegaTempoChegada()) + "\n" + \
+                "Prioridade: " + str(i.pegaPrioridade()) + "\n" + \
+                "Tempo de serviço: " + str(i.pegaTempoDeServico()) + "\n" + \
                 "Memória consumida (MBytes): " + str(i.pegaMemoriaOcupada()) + "\n" + \
-                "Impressoras usadas: " + str(i.listaPerifericos[0]) + "\n" + \
-                "Scanners usados: " + str(i.listaPerifericos[1]) + "\n" + \
-                "Modems usados: " + str(i.listaPerifericos[2]) + "\n" + \
-                "Drivers de CD usados: " + str(i.listaPerifericos[3]) + "\n" + \
-                "Tempo de início: " + str(i.tInicio) + "\n" + \
-                "Tempo total do processo: " + str(i.tTotalProcesso) + "\n" + \
-                "Tempo total suspenso: " + str(i.tTotalSuspenso) + "\n" + \
+                "Impressoras usadas: " + str(i.pegaNumDePerifericos()[0]) + "\n" + \
+                "Scanners usados: " + str(i.pegaNumDePerifericos()[1]) + "\n" + \
+                "Modems usados: " + str(i.pegaNumDePerifericos()[2]) + "\n" + \
+                "Drivers de CD usados: " + str(i.pegaNumDePerifericos()[3]) + "\n" + \
+                "Tempo de início: " + str(i.pegaTempoInicio()) + "\n" + \
+                "Tempo total do processo: " + str(i.pegaTempoTotal()) + "\n" + \
+                "Tempo total suspenso: " + str(i.pegaTempoSuspenso()) + "\n" + \
                 "Estado atual: " + i.printEstado()
-                titulo = "Histórico do processo " + i.id
+                titulo = "Histórico do processo " + i.pegaId()
         Label(win, text=message).pack()
         win.iconbitmap('win.ico')
         win.title(titulo)

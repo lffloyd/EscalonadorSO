@@ -156,3 +156,6 @@ class Processo(object):
 
     def pegaTempoDeServico(self):
         return self.__processorTime
+
+    def pegaTempoSuspenso(self):
+        return self.__tTotalSuspenso

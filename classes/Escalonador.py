@@ -14,44 +14,40 @@ class Escalonador(object):
 
     #Responsável por escalonar um processo. Emprega "round robin" (fila de TR) e "feedback" (filas de prioridade de usuário) para isso.
     def escalona(self, p, i, tAtual):
-        self.pAtual = p
         self.tAtual = tAtual
         if (p.pegaEstado() == p.EXECUTANDO):
-            #Atualiza o tempo de duração do processo:
-            #p.incrementaTempoTotal(1)
-            #Se um processo chegou a seu fim:
-            if p.pegaId() == "T2": print("The spice must flow\n")
+            #if p.pegaId() == "T2": print("The spice must flow\n")
+            # Atualiza o tempo de execução do processo:
             p.incrementaTempoDeExecucao(1)
             #if ((p.pegaTempoTotalExecutando()-1) == p.pegaTempoDeServico()) or (p.pegaTempoTotalExecutando() == p.pegaTempoDeServico()):
             if ((p.pegaTempoTotalExecutando() - 1) == p.pegaTempoDeServico()):
-                if p.pegaId() == "T2": print("I must not fear. Fear is the mindkiller.\n")
+                #if p.pegaId() == "T2": print("I must not fear. Fear is the mindkiller.\n")
                 p.setaTempoFim(tAtual)
                 p.setaEstado(p.TERMINADO)
             #Para processos de usuário (prioridades 1-3):
             else:
                 #Filas de prioridade de usuário. Seguem a política de escalonanamento "feedback", usando quantum = 2.
                 executarTroca = False
-                if (p.pegaQuantums() == self.totalQuantums):
+                if (p.pegaQuantums() < self.totalQuantums): p.incrementaQuantums(1)
+                else:
                     p.setaQuantums(0)
                     executarTroca = True
-                else: p.incrementaQuantums(1)
-                if (p.pegaPrioridade() == 1):
-                    if (executarTroca):
+                if (executarTroca):
+                    if (p.pegaPrioridade() == 1):
                         self.filas[self.U1].remove(p)
                         p.setaPrioridade(2)
                         self.filas[self.U2].append(p)  #Adiciona na próxima fila (política de feedback)
-                elif (p.pegaPrioridade() == 2):
-                    if (executarTroca):
+                    elif (p.pegaPrioridade() == 2):
                         self.filas[self.U2].remove(p)
                         p.setaPrioridade(3)
                         self.filas[self.U3].append(p)
-                elif (p.pegaPrioridade() == 3):
-                    if (executarTroca):
+                    elif (p.pegaPrioridade() == 3):
                         self.filas[self.U3].remove(p)
                         p.setaPrioridade(1)
                         self.filas[self.U1].append(p)
         print(p)
-        if (self.pAtual.pegaEstado() == self.pAtual.TERMINADO): self.pAtual = None
+        if (p.pegaEstado() == p.TERMINADO): self.pAtual = None
+        else: self.pAtual = p
         return p
 
     #Seleciona um determinado processo de uma das filas de prioridade conforme o parâmetro passado como índice para a função:
