@@ -39,9 +39,9 @@ class Processo(object):
 
     # modelo do print de processo
     def __str__(self):
-        return "Id: " + str(self.pegaId()) + "\nEstado atual: " + self.stringEstado() + "\nTempo total do processo: " \
-               + str(self.__tTotalExecutandoProcesso) + "\nTempo de serviço: " + str(self.__processorTime) + \
-               "\nMemória consumida (MBytes): " + str(self.pegaMemoriaOcupada()) #;+ "\n" + \
+        return "Id: " + str(self.pegaId()) + "\nEstado atual: " + self.stringEstado() + "\nCiclos do processo executados: " \
+               + str(self.__tTotalExecutandoProcesso) + " / " + str(self.__processorTime) + \
+               "\nMemória consumida (MB): " + str(self.pegaMemoriaOcupada()) #;+ "\n" + \
         #comentado so pra enxergar na hora de executar, senao fica confuso de ver
         # '''
         #        "Tempo de chegada: " + str(self.arrivalTime) + "\n" + \

@@ -79,10 +79,10 @@ class Sistema():
     #Executa um processo, ordenando que o escalonador orquestre a execução do mesmo:
     def executa(self, esc):
         self.atualizaProcessos(esc)
-        proc, pos = self.escolheProcesso(esc)
-        time.sleep(0.5)
+        proc = self.escolheProcesso(esc)
+        time.sleep(0.4)
         if (proc != None):
-            if (proc.pegaEstado() == proc.EXECUTANDO): proc = esc.escalona(proc, pos, self.__tempoAtual)
+            if (proc.pegaEstado() == proc.EXECUTANDO): proc = esc.escalona(proc, self.__tempoAtual)
             #As linhas seguintes devem ser alteradas para prever momentos em que não há como executar E/S.
             #Por enquanto ele deixa de executar um processo que não pode acessa E/S, mas deixa-o na memória (ou seja, bloqueia-o).
             #As linhas comentadas devem ser descomentadas quando as funcionalidades de lista de prontos, lista de bloqueados
@@ -92,7 +92,7 @@ class Sistema():
                 proc.setaEstado(proc.EXECUTANDO)
                 proc.setaTempoInicio(self.__tempoAtual)
                 self.listaExecutando.append(proc)
-                proc = esc.escalona(proc, pos, self.__tempoAtual)
+                proc = esc.escalona(proc, self.__tempoAtual)
             if (proc.pegaEstado() == proc.TERMINADO):
                 print("Processo " + proc.pegaId() + " terminado\n")
                 self.desalocaES(proc)
@@ -110,9 +110,9 @@ class Sistema():
                 if (esc.filas[i][j].pegaEstado() == esc.filas[i][j].PRONTO) or \
                         (esc.filas[i][j].pegaEstado() == esc.filas[i][j].EXECUTANDO):
                     if (esc.filas[i][j].pegaTempoChegada() <= self.__tempoAtual):
-                        return esc.filas[i][j], j
+                        return esc.filas[i][j]
                     else: break
-        return None, -1
+        return None
 
     #Atualiza o estado de um processo conforme suas demandas por RAM e E/S são atendidas num dado momento.
     def atualizaEstado(self, pr):

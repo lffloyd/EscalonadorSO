@@ -53,6 +53,7 @@ class Despachante():
     #Organiza as filas/listas de prioridade de processo com base numa lista de entrada contendo todos os processos a serem executados:
     def submeteProcesso(self):
         for i in self.fEntrada:
+            print(i)
             if (i.pegaPrioridade() == 0):
                 self.fTempoReal.append(i)
             elif (i.pegaPrioridade() == 1):

@@ -13,13 +13,12 @@ class Escalonador(object):
         self.filas = [fTReal, fUs1, fUs2, fUs3]
 
     #Responsável por escalonar um processo. Emprega "round robin" (fila de TR) e "feedback" (filas de prioridade de usuário) para isso.
-    def escalona(self, p, i, tAtual):
+    def escalona(self, p, tAtual):
         self.tAtual = tAtual
         if (p.pegaEstado() == p.EXECUTANDO):
             #if p.pegaId() == "T2": print("The spice must flow\n")
             # Atualiza o tempo de execução do processo:
             p.incrementaTempoDeExecucao(1)
-            #if ((p.pegaTempoTotalExecutando()-1) == p.pegaTempoDeServico()) or (p.pegaTempoTotalExecutando() == p.pegaTempoDeServico()):
             if ((p.pegaTempoTotalExecutando() - 1) == p.pegaTempoDeServico()):
                 #if p.pegaId() == "T2": print("I must not fear. Fear is the mindkiller.\n")
                 p.setaTempoFim(tAtual)
@@ -34,18 +33,24 @@ class Escalonador(object):
                     p.setaQuantums(0)
                     executarTroca = True
                 if (executarTroca):
-                    if (p.pegaPrioridade() == 1):
-                        self.filas[self.U1].remove(p)
-                        p.setaPrioridade(2)
-                        self.filas[self.U2].append(p)  #Adiciona na próxima fila (política de feedback)
-                    elif (p.pegaPrioridade() == 2):
-                        self.filas[self.U2].remove(p)
-                        p.setaPrioridade(3)
-                        self.filas[self.U3].append(p)
-                    elif (p.pegaPrioridade() == 3):
-                        self.filas[self.U3].remove(p)
-                        p.setaPrioridade(1)
-                        self.filas[self.U1].append(p)
+                    self.filas[p.pegaPrioridade()].remove(p)
+                    pNovaFila = (p.pegaPrioridade() % 3) + 1 #Calcula qual será a fila em que o processo será inserido com
+                    #base na fila em que ele se encontra atualmente
+                    p.setaPrioridade(pNovaFila)
+                    self.filas[p.pegaPrioridade()].append(p) #Adiciona na próxima fila (política de feedback)
+                    #
+                    # if (p.pegaPrioridade() == 1):
+                    #     self.filas[self.U1].remove(p)
+                    #     p.setaPrioridade(2)
+                    #     self.filas[self.U2].append(p)
+                    # elif (p.pegaPrioridade() == 2):
+                    #     self.filas[self.U2].remove(p)
+                    #     p.setaPrioridade(3)
+                    #     self.filas[self.U3].append(p)
+                    # elif (p.pegaPrioridade() == 3):
+                    #     self.filas[self.U3].remove(p)
+                    #     p.setaPrioridade(1)
+                    #     self.filas[self.U1].append(p)
         print(p)
         if (p.pegaEstado() == p.TERMINADO): self.pAtual = None
         else: self.pAtual = p

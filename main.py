@@ -66,8 +66,8 @@ class EscDeProcessos:
         self.memInfo.pack()
 
         #Funções relacinadas a exibição da memória usada
-        self.mem = Label(self.memInfo, text="Memória disponível: "+
-                                                          str(self.sist.pegaRamUsada())+"MB usados de "+
+        self.mem = Label(self.memInfo, text="Memória ocupada: "+
+                                                          str(self.sist.pegaRamUsada())+"MB / "+
                                                           str(self.sist.pegaTotalRam())+"MB")
         self.mem["font"] = ("Arial", "10")
         self.mem.pack(side=TOP)
@@ -161,22 +161,14 @@ class EscDeProcessos:
             self.create_window(aux)
 
     def listasAtuais(self):
-        texto = "Proc. em exec. de Tempo Real: "
-        for p in self.esc.filas[self.esc.TR]:
-            if (p.pegaTempoChegada() <= self.sist.pegaTempo()):
-                texto += str(p.pegaId()+" - ")
-        texto += "\nProc. em exec. de Prioridade 1: "
-        for p in self.esc.filas[self.esc.U1]:
-            if (p.pegaTempoChegada() <= self.sist.pegaTempo()):
-                texto += str(p.pegaId()+" - ")
-        texto += "\nProc. em exec. de Prioridade 2: "
-        for p in self.esc.filas[self.esc.U2]:
-            if (p.pegaTempoChegada() <= self.sist.pegaTempo()):
-                texto += str(p.pegaId()+" - ")
-        texto += "\nProc. em exec. de Prioridade 3: "
-        for p in self.esc.filas[self.esc.U3]:
-            if (p.pegaTempoChegada() <= self.sist.pegaTempo()):
-                texto += str(p.pegaId()+" - ")
+        texto = ""
+        for i in range(len(self.esc.filas)):
+            if (i == 0): texto += "Fila de Tempo Real: "
+            if (i == 1): texto += "\nFila de Usuário 1: "
+            if (i == 2): texto += "\nFila de Usuário 2: "
+            if (i == 3): texto += "\nFila de Usuário 3: "
+            for p in self.esc.filas[i]:
+                if (p.pegaTempoChegada() <= self.sist.pegaTempo()): texto += str(p.pegaId()+" - ")
         return texto
 
     def addTerminados(self):
