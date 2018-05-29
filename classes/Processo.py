@@ -44,17 +44,17 @@ class Processo(object):
                "\nMemória consumida (MB): " + str(self.pegaMemoriaOcupada()) #;+ "\n" + \
         #comentado so pra enxergar na hora de executar, senao fica confuso de ver
         # '''
-        #        "Tempo de chegada: " + str(self.arrivalTime) + "\n" + \
-        #        "Prioridade: " + str(self.priority) + "\n" + \
-        #        "Tempo de serviço: " + str(self.processorTime) + "\n" + \
+        #        "Tempo de chegada: " + str(self.__arrivalTime) + "\n" + \
+        #        "Prioridade: " + str(self.__priority) + "\n" + \
+        #        "Tempo de serviço: " + str(self.__processorTime) + "\n" + \
         #        "Memória consumida (MBytes): " + str(self.pegaMemoriaOcupada()) + "\n" + \
         #        "Impressoras usadas: " + str(self.listaPerifericos[0]) + "\n" + \
         #        "Scanners usados: " + str(self.listaPerifericos[1]) + "\n" + \
         #        "Modems usados: " + str(self.listaPerifericos[2]) + "\n" + \
         #        "Drivers de CD usados: " + str(self.listaPerifericos[3]) + "\n" + \
-        #        "Tempo de início: " + str(self.tInicio) + "\n" + \
-        #        "Tempo total do processo: " + str(self.tTotalProcesso) + "\n" + \
-        #        "Tempo total suspenso: " + str(self.tTotalSuspenso) + "\n" + \
+        #        "Tempo de início: " + str(self.__tInicio) + "\n" + \
+        #        "Tempo total do processo: " + str(self.__tTotalProcesso) + "\n" + \
+        #        "Tempo total suspenso: " + str(self.__tTotalSuspenso) + "\n" + \
         #        "Estado atual: " + self.printEstado()
         # '''
 

@@ -28,6 +28,7 @@ class Escalonador(object):
                     else:
                         p.setaQuantums(0)
                         # Define-em em qual fila o processo atual será inserido:
+                        #self.filas[p.pegaPrioridade()].remove(p)
                         self.filas[p.pegaPrioridade()].remove(p)
                         novaPrioridade = (p.pegaPrioridade() % 3) + 1  # Calcula qual será a fila em que o processo será inserido com
                         # base na fila em que ele se encontra atualmente
@@ -45,16 +46,7 @@ class Escalonador(object):
         else: return self.filas[self.U3][indice]
 
     def atualizaFilas(self, fTReal, fUs1, fUs2, fUs3):
-        for pr in fTReal:
-            self.filas[self.TR].append(pr)
-        for pr in fUs1:
-            self.filas[self.TR].append(pr)
-        for pr in fUs2:
-            self.filas[self.TR].append(pr)
-        for pr in fUs3:
-            self.filas[self.TR].append(pr)
-        # for fila in self.filas:
-        #     print("[")
-        #     for pr in fila:
-        #         print(str(pr) + ", ")
-        #     print("]")
+        for pr in fTReal: self.filas[self.TR].append(pr)
+        for pr in fUs1: self.filas[self.U1].append(pr)
+        for pr in fUs2: self.filas[self.U2].append(pr)
+        for pr in fUs3: self.filas[self.U3].append(pr)

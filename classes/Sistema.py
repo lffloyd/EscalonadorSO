@@ -132,7 +132,7 @@ class Sistema():
                         if (bloq.pegaMemoriaOcupada() >= pr.pegaMemoriaOcupada()):
                             self.listaBloqueados.remove(bloq)
                             self.desalocaMemoria(bloq)
-                            self.listaSuspensos.append(bloq.setaEstado(bloq.SUSPÈNSO))
+                            self.listaSuspensos.append(bloq.setaEstado(bloq.SUSPENSO))
                             self.alocaMemoria(pr)
                             if (pr.ramFoiAlocada()): self.alocaESEReorganiza(pr)
                             break

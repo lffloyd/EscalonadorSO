@@ -14,9 +14,7 @@ class Despachante():
         self.fUsuarioP3 = []
 
         self.trEnviados = 0
-        self.us1Enviados = 0
-        self.us2Enviados = 0
-        self.us3Enviados = 0
+        self.usEnviados = 0
         #Abre o arquivo e cria a lista de entrada que é igual ao arquivo
         self.file = open(arqProcessos, 'r')
         self.leArq()
@@ -51,15 +49,9 @@ class Despachante():
             if fEntrada[i].pegaPrioridade() == 0:
                 self.trEnviados += 1
                 fEntrada[i].setaId('TR-' + str(self.trEnviados))
-            elif fEntrada[i].pegaPrioridade() == 1:
-                self.us1Enviados += 1
-                fEntrada[i].setaId('U1-' + str(self.us1Enviados))
-            elif fEntrada[i].pegaPrioridade() == 2:
-                self.us2Enviados += 1
-                fEntrada[i].setaId('U2-' + str(self.us2Enviados))
             else:
-                self.us3Enviados += 1
-                fEntrada[i].setaId('U3-' + str(self.us3Enviados))
+                self.usEnviados += 1
+                fEntrada[i].setaId('U-' + str(self.usEnviados))
 
     #Organiza as filas/listas de prioridade de processo com base numa lista de entrada contendo todos os processos a serem executados:
     def submeteProcessos(self, tAtual):
