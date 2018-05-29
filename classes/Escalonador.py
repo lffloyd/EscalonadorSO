@@ -16,11 +16,9 @@ class Escalonador(object):
     def escalona(self, p, tAtual):
         self.tAtual = tAtual
         if (p.pegaEstado() == p.EXECUTANDO):
-            #if p.pegaId() == "T2": print("The spice must flow\n")
             # Atualiza o tempo de execução do processo:
             p.incrementaTempoDeExecucao(1)
             if ((p.pegaTempoTotalExecutando() - 1) == p.pegaTempoDeServico()):
-                #if p.pegaId() == "T2": print("I must not fear. Fear is the mindkiller.\n")
                 p.setaTempoFim(tAtual)
                 p.setaEstado(p.TERMINADO)
             #Para processos de usuário (prioridades 1-3):
@@ -38,19 +36,6 @@ class Escalonador(object):
                     #base na fila em que ele se encontra atualmente
                     p.setaPrioridade(pNovaFila)
                     self.filas[p.pegaPrioridade()].append(p) #Adiciona na próxima fila (política de feedback)
-                    #
-                    # if (p.pegaPrioridade() == 1):
-                    #     self.filas[self.U1].remove(p)
-                    #     p.setaPrioridade(2)
-                    #     self.filas[self.U2].append(p)
-                    # elif (p.pegaPrioridade() == 2):
-                    #     self.filas[self.U2].remove(p)
-                    #     p.setaPrioridade(3)
-                    #     self.filas[self.U3].append(p)
-                    # elif (p.pegaPrioridade() == 3):
-                    #     self.filas[self.U3].remove(p)
-                    #     p.setaPrioridade(1)
-                    #     self.filas[self.U1].append(p)
         print(p)
         if (p.pegaEstado() == p.TERMINADO): self.pAtual = None
         else: self.pAtual = p
