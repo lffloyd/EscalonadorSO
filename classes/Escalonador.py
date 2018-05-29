@@ -33,7 +33,7 @@ class Escalonador(object):
                     if (executarTroca):
                         #Nese momento, como o quantum total foi atingido, deve-se alterar a fila de todos os processos de fila de usuário.
                         for i in range(len(self.filas)):
-                            if (len(self.filas[i]) > 0):
+                            if (len(1, self.filas[i]) > 0):
                                 if (self.filas[i][0] != p):
                                     pr = self.filas[i].pop(0)
                                     prNovaFila = (pr.pegaPrioridade() % 3) + 1
