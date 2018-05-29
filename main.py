@@ -102,7 +102,7 @@ class EscDeProcessos:
 
 
         #Funções para mostrar as oscilaões das variáveis do sistema
-        self.tempo = Label(self.estatisticasDoSistema, text="Tempo percorrido: "+str(self.sist.pegaTempo()))
+        self.tempo = Label(self.estatisticasDoSistema, text="Tempo percorrido: "+str(self.sist.pegaTempoAtual()))
         self.tempo.pack()
 
         self.impDisp = Label(self.estatisticasDoSistema,
@@ -168,7 +168,7 @@ class EscDeProcessos:
             if (i == 2): texto += "\nFila de Usuário 2: "
             if (i == 3): texto += "\nFila de Usuário 3: "
             for p in self.esc.filas[i]:
-                if (p.pegaTempoChegada() <= self.sist.pegaTempo()): texto += str(p.pegaId()+" - ")
+                if (p.pegaTempoChegada() <= self.sist.pegaTempoAtual()): texto += str(p.pegaId()+" - ")
         return texto
 
     def addTerminados(self):
@@ -190,8 +190,8 @@ class EscDeProcessos:
     def escalonarProcessos(self, event):
         self.pause.pack(side=LEFT)
         self.avisoExe["text"] = "Executando " + self.arq + "..." #Mostra o arquivo que está sendo executado
-        self.desp.submeteProcesso()
-        #self.desp.submeteProcesso(self.sist.pegaTempoAtual()) #cria as filas de processo
+        self.desp.submeteProcessos(self.sist.pegaTempoAtual())
+        #self.desp.submeteProcessos(self.sist.pegaTempoAtual()) #cria as filas de processo
         print(self.desp.fTempoReal)
         self.esc = Escalonador(self.desp.pegafTempoReal(), self.desp.pegafUsuarioP1(), self.desp.pegafUsuarioP2(), self.desp.pegafUsuarioP3())
         self.executando = TRUE
@@ -199,12 +199,12 @@ class EscDeProcessos:
     #função que auxilia o loop principal
     def atualizaDados(self):
         #atualizadores dos textos
-        self.mem["text"] = "Memória disponível: "+str(self.sist.pegaRamUsada())+"MB usados de "+\
+        self.mem["text"] = "Memória usada: "+str(self.sist.pegaRamUsada())+"MB / "+\
                            str(self.sist.pegaTotalRam())+"MB"
         #self.tempo["text"] = "Tempo percorrido: " + str(self.sist.pegaTempo() / (60*60)) + ":" + \
         #                     "" + str((self.sist.pegaTempo() % (60*60)) / (60)) + ":" + \
         #                     "" + str((self.sist.pegaTempo() % (60*60)) % (60))
-        self.tempo["text"] = "Tempo percorrido: " + str(self.sist.pegaTempo()) + "s"
+        self.tempo["text"] = "Tempo percorrido: " + str(self.sist.pegaTempoAtual()) + "s"
         self.pAtual["text"] ="Processo Atual: "+str(self.esc.pAtual)
         self.impDisp["text"] = "Impressoras disponíveis: " + str(self.sist.dispositivosESLivres(0))
         self.scnDisp["text"] = "Scanners disponíveis: " + str(self.sist.dispositivosESLivres(1))
@@ -223,7 +223,9 @@ class EscDeProcessos:
             self.memBar["style"] = ""
 
         #executa uma iteração do escalonamento
-        if (self.executando): self.sist.executa(self.esc)
+        if (self.executando):
+            #self.desp.submeteProcessos(self.sist.pegaTempoAtual())
+            self.sist.executa(self.esc)
         root.update()
         global AFTER
         AFTER = root.after(100, self.atualizaDados)

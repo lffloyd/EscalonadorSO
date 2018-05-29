@@ -51,7 +51,7 @@ class Despachante():
                 cont2 += 1
 
     #Organiza as filas/listas de prioridade de processo com base numa lista de entrada contendo todos os processos a serem executados:
-    def submeteProcesso(self):
+    def submeteProcessos(self, tAtual):
         for i in self.fEntrada:
             print(i)
             if (i.pegaPrioridade() == 0):
@@ -74,6 +74,8 @@ class Despachante():
         self.fUsuarioP3.sort(key=lambda x: x.pegaTempoChegada())
         for i in range(len(self.fUsuarioP3)):
             print("ordem:", i, self.fUsuarioP3[i].pegaId())
+
+    def processoDeveSerEnviado(self, tAtual): return
 
     #"Funções "get" para as filas de prioridade:
     def pegafTempoReal(self):

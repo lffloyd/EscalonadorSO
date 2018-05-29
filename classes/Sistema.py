@@ -215,10 +215,6 @@ class Sistema():
         elif cod == MDM: return (self.maxMdm - (len(self.__matrizES[MDM])))
         else: return (self.maxCd - (len(self.__matrizES[CD])))
 
-    #Retorna o tempo atual:
-    def pegaTempo(self):
-        return self.__tempoAtual
-
     #Retorna a qtd. de RAM livre:
     def pegaMemoriaLivre(self):
         return self.__totalRAM - self.__ramUsada
