@@ -28,6 +28,7 @@ class Escalonador(object):
             else:
                 #Filas de prioridade de usuário. Seguem a política de escalonanamento "feedback", usando quantum = 2.
                 executarTroca = False
+                print("Quantum atual de "+str(p.pegaId())+": "+str(p.pegaQuantums()))
                 if (p.pegaQuantums() < self.totalQuantums): p.incrementaQuantums(1)
                 else:
                     p.setaQuantums(0)

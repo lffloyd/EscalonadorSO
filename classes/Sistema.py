@@ -179,8 +179,8 @@ class Sistema():
     def requisitaES(self, processo):
         if (not processo.esFoiAlocada()):
             listaES = processo.pegaNumDePerifericos()
-            print("Lista E/S do processo " + processo.pegaId())
-            print(listaES)
+            #print("Lista E/S do processo " + processo.pegaId())
+            #print(listaES)
             if (processo.pegaEstado() == processo.NOVO) or (processo.pegaEstado() == processo.SUSPENSO) or \
                     (processo.pegaEstado() == processo.BLOQUEADO):
                 for i in range(len(self.__matrizES)):
