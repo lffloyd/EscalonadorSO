@@ -19,23 +19,32 @@ class Escalonador(object):
             # Atualiza o tempo de execução do processo:
             p.incrementaTempoDeExecucao(1)
             if ((p.pegaTempoTotalExecutando() - 1) == p.pegaTempoDeServico()):
-                p.setaTempoFim(tAtual)
                 p.setaEstado(p.TERMINADO)
             #Para processos de usuário (prioridades 1-3):
             else:
                 #Filas de prioridade de usuário. Seguem a política de escalonanamento "feedback", usando quantum = 2.
-                executarTroca = False
-                print("Quantum atual de "+str(p.pegaId())+": "+str(p.pegaQuantums()))
-                if (p.pegaQuantums() < self.totalQuantums): p.incrementaQuantums(1)
-                else:
-                    p.setaQuantums(0)
-                    executarTroca = True
-                if (executarTroca):
-                    self.filas[p.pegaPrioridade()].remove(p)
-                    pNovaFila = (p.pegaPrioridade() % 3) + 1 #Calcula qual será a fila em que o processo será inserido com
-                    #base na fila em que ele se encontra atualmente
-                    p.setaPrioridade(pNovaFila)
-                    self.filas[p.pegaPrioridade()].append(p) #Adiciona na próxima fila (política de feedback)
+                if (p.pegaPrioridade() > 0):
+                    executarTroca = False
+                    print("Quantum atual de "+str(p.pegaId())+": "+str(p.pegaQuantums()))
+                    if (p.pegaQuantums() < self.totalQuantums): p.incrementaQuantums(1)
+                    else:
+                        p.setaQuantums(0)
+                        executarTroca = True
+                    if (executarTroca):
+                        #Nese momento, como o quantum total foi atingido, deve-se alterar a fila de todos os processos de fila de usuário.
+                        for i in range(len(self.filas)):
+                            if (len(self.filas[i]) > 0):
+                                if (self.filas[i][0] != p):
+                                    pr = self.filas[i].pop(0)
+                                    prNovaFila = (pr.pegaPrioridade() % 3) + 1
+                                    pr.setaPrioridade(prNovaFila)
+                                    self.filas[pr.pegaPrioridade()].append(pr)
+                        #Depois disso, define-em em qual fila o processo atual será inserido:
+                        self.filas[p.pegaPrioridade()].remove(p)
+                        pNovaFila = (p.pegaPrioridade() % 3) + 1  # Calcula qual será a fila em que o processo será inserido com
+                        # base na fila em que ele se encontra atualmente
+                        p.setaPrioridade(pNovaFila)
+                        self.filas[p.pegaPrioridade()].append(p)  # Adiciona na próxima fila (política de feedback)
         print(p)
         if (p.pegaEstado() == p.TERMINADO): self.pAtual = None
         else: self.pAtual = p
