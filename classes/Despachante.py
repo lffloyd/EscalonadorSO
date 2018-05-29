@@ -7,10 +7,16 @@ class Despachante():
     def __init__(self, arqProcessos, totalRamSistema):
         self.__totalRAMSistema = totalRamSistema
         self.fEntrada = []
+        self.fSubmetidos = []
         self.fTempoReal = []
         self.fUsuarioP1 = []
         self.fUsuarioP2 = []
         self.fUsuarioP3 = []
+
+        self.trEnviados = 0
+        self.us1Enviados = 0
+        self.us2Enviados = 0
+        self.us3Enviados = 0
         #Abre o arquivo e cria a lista de entrada que é igual ao arquivo
         self.file = open(arqProcessos, 'r')
         self.leArq()
@@ -28,7 +34,7 @@ class Despachante():
                            int(processoAtual[4]), int(processoAtual[5]), int(processoAtual[6]), int(processoAtual[7]),
                             0, 0, 0, 0)
             if (self.verificaProcesso(novo)): self.fEntrada.append(novo)
-        self.criaID(self.fEntrada)
+        #self.criaID(self.fEntrada)
 
     #Verifica se um determinado processo pode ser executado tendo em vista as limitações de hardware da máquina/sistema em questão:
     def verificaProcesso(self, processo):
@@ -41,41 +47,42 @@ class Despachante():
 
     #Cria um identificador único para cada processo na lista de entrada:
     def criaID(self, fEntrada):
-        cont1, cont2 = 1, 1
-        for i in range(fEntrada.__len__()):
+        for i in range(len(fEntrada)):
             if fEntrada[i].pegaPrioridade() == 0:
-                fEntrada[i].setaId('T' + str(cont1))
-                cont1 += 1
+                self.trEnviados += 1
+                fEntrada[i].setaId('TR-' + str(self.trEnviados))
+            elif fEntrada[i].pegaPrioridade() == 1:
+                self.us1Enviados += 1
+                fEntrada[i].setaId('U1-' + str(self.us1Enviados))
+            elif fEntrada[i].pegaPrioridade() == 2:
+                self.us2Enviados += 1
+                fEntrada[i].setaId('U2-' + str(self.us2Enviados))
             else:
-                fEntrada[i].setaId('U' + str(cont2))
-                cont2 += 1
+                self.us3Enviados += 1
+                fEntrada[i].setaId('U3-' + str(self.us3Enviados))
 
     #Organiza as filas/listas de prioridade de processo com base numa lista de entrada contendo todos os processos a serem executados:
     def submeteProcessos(self, tAtual):
-        for i in self.fEntrada:
-            print(i)
-            if (i.pegaPrioridade() == 0):
-                self.fTempoReal.append(i)
-            elif (i.pegaPrioridade() == 1):
-                self.fUsuarioP1.append(i)
-            elif (i.pegaPrioridade() == 2):
-                self.fUsuarioP2.append(i)
-            elif (i.pegaPrioridade() == 3):
-                self.fUsuarioP3.append(i)
+        self.fTempoReal = self.fUsuarioP1 = self.fUsuarioP2 = self.fUsuarioP3 = []
+        for pr in self.fEntrada[:]:
+            if (self.processoDeveSerEnviado(pr, tAtual)):
+                self.fEntrada.remove(pr)
+                self.fSubmetidos.append(pr)
+                if (pr.pegaPrioridade() == 0): self.fTempoReal.append(pr)
+                elif (pr.pegaPrioridade() == 1): self.fUsuarioP1.append(pr)
+                elif (pr.pegaPrioridade() == 2): self.fUsuarioP2.append(pr)
+                else: self.fUsuarioP3.append(pr)
         self.fTempoReal.sort(key=lambda x: x.pegaTempoChegada())
-        for i in range(len(self.fTempoReal)):
-            print("ordem:", i, self.fTempoReal[i].pegaId())
         self.fUsuarioP1.sort(key=lambda x: x.pegaTempoChegada())
-        for i in range(len(self.fUsuarioP1)):
-            print("ordem:", i, self.fUsuarioP1[i].pegaId())
         self.fUsuarioP2.sort(key=lambda x: x.pegaTempoChegada())
-        for i in range(len(self.fUsuarioP2)):
-            print("ordem:", i, self.fUsuarioP2[i].pegaId())
         self.fUsuarioP3.sort(key=lambda x: x.pegaTempoChegada())
-        for i in range(len(self.fUsuarioP3)):
-            print("ordem:", i, self.fUsuarioP3[i].pegaId())
+        self.criaID(self.fTempoReal)
+        self.criaID(self.fUsuarioP1)
+        self.criaID(self.fUsuarioP2)
+        self.criaID(self.fUsuarioP3)
+        return self.fTempoReal, self.fUsuarioP1, self.fUsuarioP2, self.fUsuarioP3
 
-    def processoDeveSerEnviado(self, tAtual): return
+    def processoDeveSerEnviado(self, pr, tAtual): return pr.pegaTempoChegada() <= tAtual
 
     #"Funções "get" para as filas de prioridade:
     def pegafTempoReal(self):

@@ -80,7 +80,7 @@ class Sistema():
     def executa(self, esc):
         self.atualizaProcessos(esc)
         proc = self.escolheProcesso(esc)
-        time.sleep(0.4)
+        time.sleep(0.3)
         if (proc != None):
             if (proc.pegaEstado() == proc.EXECUTANDO): proc = esc.escalona(proc, self.__tempoAtual)
             #As linhas seguintes devem ser alteradas para prever momentos em que não há como executar E/S.
@@ -109,9 +109,8 @@ class Sistema():
             for j in range(len(esc.filas[i])):
                 if (esc.filas[i][j].pegaEstado() == esc.filas[i][j].PRONTO) or \
                         (esc.filas[i][j].pegaEstado() == esc.filas[i][j].EXECUTANDO):
-                    if (esc.filas[i][j].pegaTempoChegada() <= self.__tempoAtual):
-                        return esc.filas[i][j]
-                    else: break
+                    return esc.filas[i][j]
+                else: break
         return None
 
     #Atualiza o estado de um processo conforme suas demandas por RAM e E/S são atendidas num dado momento.
@@ -179,11 +178,11 @@ class Sistema():
     def requisitaES(self, processo):
         if (not processo.esFoiAlocada()):
             listaES = processo.pegaNumDePerifericos()
-            #print("Lista E/S do processo " + processo.pegaId())
-            #print(listaES)
+            #print("Lista E/S do processo " + processo.pegaId()) #print(listaES)
             if (processo.pegaEstado() == processo.NOVO) or (processo.pegaEstado() == processo.SUSPENSO) or \
                     (processo.pegaEstado() == processo.BLOQUEADO):
-                for i in range(len(self.__matrizES)):
+                #for i in range(len(self.__matrizES)):
+                for i in range(len(self.__matrizES[:])):
                     if (listaES[i] != 0):
                         if ((len(self.__matrizES[i]) + listaES[i]) <= (self.maximos[i])):
                             for j in range(listaES[i]): self.__matrizES[i].append(processo.pegaId() + "_" + str(j))
