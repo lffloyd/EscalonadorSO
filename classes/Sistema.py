@@ -64,8 +64,12 @@ class Sistema():
     def atualizaProcessos(self, esc):
         print("Em atualizaProcessos()")
 
-        for pr in self.listaBloqueados: pr.incrementaTempoTotal(1)
-        for pr in self.listaSuspensos: pr.incrementaTempoTotal(1)
+        for pr in self.listaBloqueados:
+            pr.incrementaTempoTotal(1)
+            self.atualizaEstado(pr, esc)
+        for pr in self.listaSuspensos:
+            pr.incrementaTempoTotal(1)
+            self.atualizaEstado(pr, esc)
 
         #esc.imprimeFila(self.listaBloqueados, 66)
         #esc.imprimeFila(self.listaSuspensos, 67)
@@ -141,7 +145,7 @@ class Sistema():
     def atualizaEstado(self, pr, esc):
         #print("Em atualizaEstado()")
 
-        #if (pr.pegaId() == "U-4"): print("O ALEMAO TA AQUI: " + str(pr))
+        if (pr.pegaId() == "U-1"): print("O ALEMAO TA AQUI: " + str(pr) + ", lista E/S: "+ str(pr.pegaNumDePerifericos()))
 
         if (pr.pegaEstado() == pr.BLOQUEADO): self.alocaESEReorganiza(pr, esc)
 
