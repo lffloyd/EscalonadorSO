@@ -25,16 +25,11 @@ class Sistema():
         self.__totalRAM = totalRam
         self.__tempoAtual = 0
         self.__ramUsada = 0
-        self.__matrizES = []
-        for i in range(4): self.__matrizES.append([])
 
-        # Variáveis para controle que nao serão alteradas após instanciamento da classe.
-        self.maxImp = totalImp
-        self.maxScn = totalScn
-        self.maxMdm = totalMdm
-        self.maxCd = totalCd
+        # Variável para controle que não será alterada após instanciamento da classe.
+        self.__maximos = [totalImp, totalScn, totalMdm, totalCd]
 
-        self.maximos = [totalImp, totalScn, totalMdm, totalCd]
+        self.__esUsados = [0, 0, 0, 0]
 
         #Filas de estado:
         self.listaProntos = []
@@ -222,42 +217,41 @@ class Sistema():
             listaES = processo.pegaNumDePerifericos()
             if (processo.pegaEstado() == processo.NOVO) or (processo.pegaEstado() == processo.SUSPENSO) or \
                     (processo.pegaEstado() == processo.BLOQUEADO):
-                for i in range(len(self.__matrizES[:])):
-                    if (listaES[i] != 0):
-                        if ((len(self.__matrizES[i]) + listaES[i]) <= (self.maximos[i])):
-                            for j in range(listaES[i]):
-                                if (processo.pegaId() + "_" + str(j)) not in self.__matrizES[i]:
-                                    self.__matrizES[i].append(processo.pegaId() + "_" + str(j))
-                        else:
-                            print("Erro em requisição de E/S: processo " + processo.pegaId())
-                            return False, processo
-                processo.setaEstadoAlocacaoES(True)
-                return True, processo
+                cont = 0
+                for i in range(len(listaES)):
+                    if ((self.__esUsados[i] + listaES[i]) <= self.__maximos[i]): cont += 1
+                    else: break
+                if (cont == 4):
+                    for i in range(len(self.__esUsados[:])): self.__esUsados[i] += listaES[i]
+                    processo.setaEstadoAlocacaoES(True)
+                    return True, processo
+                else:
+                    print("Erro em requisição de E/S: processo " + processo.pegaId())
+                    return False, processo
 
     # Desaloca recursos de E/S de um processo:
     def desalocaES(self, processo):
         if (processo.esFoiAlocada()):
             listaES = processo.pegaNumDePerifericos()
             if (processo.pegaEstado() == processo.TERMINADO):
-                    #for i in range(len(self.__matrizES)):
-                    for i in range(len(self.__matrizES[:])):
-                        if (listaES[i] != 0):
-                            for j in range(listaES[i]):
-                                if (processo.pegaId() + "_" + str(j)) in self.__matrizES[i]:
-                                    self.__matrizES[i].remove(processo.pegaId() + "_" + str(j))
+                cont = 0
+                for i in range(len(listaES)):
+                    if ((self.__esUsados[i] - listaES[i]) >= 0): cont += 1
+                    else: break
+                if (cont == 4):
+                    for i in range(len(self.__esUsados[:])): self.__esUsados[i] -= listaES[i]
                     processo.setaEstadoAlocacaoES(False)
                     return True, processo
-            print("Erro em desalocação de E/S: processo " + processo.pegaId())
-            return False, processo
+                else:
+                    print("Erro em desalocação de E/S: processo " + processo.pegaId())
+                    return False, processo
 
-    #Retorna a qtd. de dispositivos E/S livres:
+    # Retorna a qtd. de dispositivos E/S livres:
     def dispositivosESLivres(self, cod):
-        if cod == IMP: return (self.maxImp - (len(self.__matrizES[IMP])))
-        elif cod == SCN: return (self.maxScn - (len(self.__matrizES[SCN])))
-        elif cod == MDM: return (self.maxMdm - (len(self.__matrizES[MDM])))
-        else: return (self.maxCd - (len(self.__matrizES[CD])))
+        if (cod >= 0) and (cod < 4):
+            return self.__maximos[cod] - self.__esUsados[cod]
 
-    #Retorna a qtd. de RAM livre:
+    # Retorna a qtd. de RAM livre:
     def pegaMemoriaLivre(self):
         return self.__totalRAM - self.__ramUsada
 
