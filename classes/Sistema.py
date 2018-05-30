@@ -106,9 +106,11 @@ class Sistema():
         for i in range(len(esc.filas)):
             for j in range(len(esc.filas[i])):
                 if (esc.filas[i][j].pegaEstado() == esc.filas[i][j].PRONTO) or \
-                        (esc.filas[i][j].pegaEstado() == esc.filas[i][j].EXECUTANDO):
-                    return esc.filas[i][j]
+                        (esc.filas[i][j].pegaEstado() == esc.filas[i][j].EXECUTANDO): return esc.filas[i][j]
                 else: break
+        print("ENGLISH MOTHERFUCKER!! DO YOU SPEAK IT?")
+        for i in range(len(esc.filas)):
+            print(esc.imprimeFila(esc.filas[i], i))
         return None
 
     #Atualiza o estado de um processo conforme suas demandas por RAM e E/S são atendidas num dado momento.
@@ -124,15 +126,15 @@ class Sistema():
             if (pr.ramFoiAlocada()): self.alocaESEReorganiza(pr)
             if (pr.pegaEstado() == pr.NOVO) and (not pr.ramFoiAlocada()):  # Nesse caso, o processo não pôde ser alocado em RAM e algum processo (provavelmente mais antigo)
                 # deve ser suspenso para que o novo processo pronto seja alocado.
-                    for bloq in self.listaBloqueados:
-                        if (bloq.pegaMemoriaOcupada() >= pr.pegaMemoriaOcupada()):
-                            self.listaBloqueados.remove(bloq)
-                            self.desalocaMemoria(bloq)
-                            bloq.setaEstado(bloq.SUSPENSO)
-                            self.listaSuspensos.append(bloq)
-                            self.alocaMemoria(pr)
-                            if (pr.ramFoiAlocada()): self.alocaESEReorganiza(pr)
-                            break
+                for bloq in self.listaBloqueados:
+                    if (bloq.pegaMemoriaOcupada() >= pr.pegaMemoriaOcupada()):
+                        self.listaBloqueados.remove(bloq)
+                        self.desalocaMemoria(bloq)
+                        bloq.setaEstado(bloq.SUSPENSO)
+                        self.listaSuspensos.append(bloq)
+                        self.alocaMemoria(pr)
+                        if (pr.ramFoiAlocada()): self.alocaESEReorganiza(pr)
+                        break
         return pr
 
     #Ordena a alocação de dispositivos E/S a um processo e a transferência desse processo entre filas de prioridade.

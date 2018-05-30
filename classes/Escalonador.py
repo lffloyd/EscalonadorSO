@@ -15,6 +15,7 @@ class Escalonador(object):
     #Responsável por escalonar um processo. Emprega "round robin" (fila de TR) e "feedback" (filas de prioridade de usuário) para isso.
     def escalona(self, p, tAtual):
         self.tAtual = tAtual
+        print("TEMER DEUS")
         if (p.pegaEstado() == p.EXECUTANDO):
             # Atualiza o tempo de execução do processo:
             p.incrementaTempoDeExecucao(1)
@@ -45,17 +46,13 @@ class Escalonador(object):
 
     def atualizaFilas(self, fTReal, fUs1, fUs2, fUs3):
         for pr in fTReal:
-            if pr not in self.filas[self.TR]:
-                self.filas[self.TR].append(pr)
+            if pr not in self.filas[self.TR]: self.filas[self.TR].append(pr)
         for pr in fUs1:
-            if pr not in self.filas[self.U1]:
-                self.filas[self.U1].append(pr)
+            if pr not in self.filas[self.U1]: self.filas[self.U1].append(pr)
         for pr in fUs2:
-            if pr not in self.filas[self.U2]:
-                self.filas[self.U2].append(pr)
+            if pr not in self.filas[self.U2]: self.filas[self.U2].append(pr)
         for pr in fUs3:
-            if pr not in self.filas[self.U3]:
-                self.filas[self.U3].append(pr)
+            if pr not in self.filas[self.U3]: self.filas[self.U3].append(pr)
 
         #for i in range(len(self.filas)): print(self.imprimeFila(self.filas[i], i))
 
