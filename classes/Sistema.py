@@ -95,11 +95,11 @@ class Sistema():
                 #self.listaProntos.remove(proc)
                 proc.setaEstado(proc.EXECUTANDO)
                 proc.setaTempoInicio(self.__tempoAtual)
-                #self.listaExecutando.append(proc)
+                self.listaExecutando.append(proc)
                 proc = esc.escalona(proc, self.__tempoAtual)
             if (proc.pegaEstado() == proc.TERMINADO):
                 print("Processo " + proc.pegaId() + " terminado\n")
-                #self.listaExecutando.remove(proc)
+                self.listaExecutando.remove(proc)
                 self.desalocaES(proc)
                 self.desalocaMemoria(proc)
                 proc.setaTempoFim(self.__tempoAtual)
@@ -205,7 +205,9 @@ class Sistema():
                     #for i in range(len(self.__matrizES)):
                     for i in range(len(self.__matrizES[:])):
                         if (listaES[i] != 0):
-                            for j in range(listaES[i]): self.__matrizES[i].remove(processo.pegaId() + "_" + str(j))
+                            for j in range(listaES[i]):
+                                if (processo.pegaId() + "_" + str(j)) in self.__matrizES[i]:
+                                    self.__matrizES[i].remove(processo.pegaId() + "_" + str(j))
                     processo.setaEstadoAlocacaoES(False)
                     return True, processo
             print("Erro em desalocação de E/S: processo " + processo.pegaId())
