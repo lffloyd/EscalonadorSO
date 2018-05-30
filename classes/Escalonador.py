@@ -15,7 +15,7 @@ class Escalonador(object):
     #Responsável por escalonar um processo. Emprega "round robin" (fila de TR) e "feedback" (filas de prioridade de usuário) para isso.
     def escalona(self, p, tAtual):
         self.tAtual = tAtual
-        print("TEMER DEUS")
+        print("Entrou no escalona()")
         if (p.pegaEstado() == p.EXECUTANDO):
             # Atualiza o tempo de execução do processo:
             p.incrementaTempoDeExecucao(1)

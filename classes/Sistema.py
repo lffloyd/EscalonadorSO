@@ -80,7 +80,7 @@ class Sistema():
     def executa(self, esc):
         self.atualizaProcessos(esc)
         proc = self.escolheProcesso(esc)
-        print("O BOZO CHEGOU! " + str(proc))
+        print("Entrou no executa() " + str(proc))
         time.sleep(0.3)
         if (proc != None):
             if (proc.pegaEstado() == proc.EXECUTANDO): proc = esc.escalona(proc, self.__tempoAtual)
@@ -108,7 +108,7 @@ class Sistema():
                 if (esc.filas[i][j].pegaEstado() == esc.filas[i][j].PRONTO) or \
                         (esc.filas[i][j].pegaEstado() == esc.filas[i][j].EXECUTANDO): return esc.filas[i][j]
                 else: break
-        print("ENGLISH MOTHERFUCKER!! DO YOU SPEAK IT?")
+        print("Entrou em escolheProcesso()")
         for i in range(len(esc.filas)):
             print(esc.imprimeFila(esc.filas[i], i))
         return None
