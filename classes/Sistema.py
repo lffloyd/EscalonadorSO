@@ -28,7 +28,6 @@ class Sistema():
 
         # Variável para controle que não será alterada após instanciamento da classe.
         self.__maximos = [totalImp, totalScn, totalMdm, totalCd]
-
         self.__esUsados = [0, 0, 0, 0]
 
         #Filas de estado:
@@ -37,12 +36,6 @@ class Sistema():
         self.listaBloqueados = []
         self.listaSuspensos = []
         self.listaTerminados = []
-
-        # Variáveis para controle. Acho que poderá ser removido futuramente
-        # self.totalProcessosProntos = 0
-        # self.totalProcessosExecutando = 0
-        # self.totalProcessosSuspensos = 0
-        # self.totalProcessosTerminados = 0
 
     # Organiza o 'print' da classe:
     def __str__(self):
@@ -63,21 +56,17 @@ class Sistema():
     #possam ser carregados::
     def atualizaProcessos(self, esc):
         #print("Em atualizaProcessos()")
-
         for pr in self.listaBloqueados:
             pr.incrementaTempoTotal(1)
             self.atualizaEstado(pr, esc)
         for pr in self.listaSuspensos:
             pr.incrementaTempoTotal(1)
             self.atualizaEstado(pr, esc)
-
         #esc.imprimeFila(self.listaBloqueados, 66)
         #esc.imprimeFila(self.listaSuspensos, 67)
-
         for fila in esc.filas[:]:
             for pr in fila[:]:
                 pr.incrementaTempoTotal(1)
-
                 # if (pr.pegaEstado() == pr.BLOQUEADO):
                 #     if pr not in self.listaBloqueados:
                 #         esc.filas[pr.pegaPrioridade()].remove(pr)
@@ -87,9 +76,7 @@ class Sistema():
                 #         esc.filas[pr.pegaPrioridade()].remove(pr)
                 #         self.listaSuspensos.append(pr)
                 self.atualizaEstado(pr, esc)
-
         #for i in range(len(esc.filas)): esc.imprimeFila(esc.filas[i], i)
-
         return
 
     #Executa um processo, ordenando que o escalonador orquestre a execução do mesmo:
@@ -105,7 +92,6 @@ class Sistema():
                 proc.setaEstado(proc.EXECUTANDO)
                 proc.setaTempoInicio(self.__tempoAtual)
                 self.listaExecutando.append(proc)
-                if (proc.pegaId() == "U-1"): print("CHEGOU AQUI O CARA: " + str(proc))
                 esc.escalona(proc, self.__tempoAtual)
             if (proc.pegaEstado() == proc.EXECUTANDO): esc.escalona(proc, self.__tempoAtual)
             if (proc.pegaEstado() == proc.TERMINADO):
@@ -115,8 +101,6 @@ class Sistema():
                 self.desalocaMemoria(proc)
                 proc.setaTempoFim(self.__tempoAtual)
                 if (proc in esc.filas[proc.pegaPrioridade()]): esc.filas[proc.pegaPrioridade()].remove(proc)
-                #for i in range(len(esc.filas[:])):
-                #    if (proc in esc.filas[i]): esc.filas[i].remove(proc)
                 self.listaTerminados.append(proc)
         self.__tempoAtual += 1
         return
@@ -128,9 +112,6 @@ class Sistema():
         for i in range(len(esc.filas)):
             #print("Índice: " + str(i))
             if (len(esc.filas[i]) > 0):
-                # if (esc.filas[i][0].pegaId() == "U-4"):
-                #    print(esc.filas[i][0])
-                #    break
                 if (esc.filas[i][0].pegaEstado() == esc.filas[i][0].PRONTO) or \
                     (esc.filas[i][0].pegaEstado() == esc.filas[i][0].EXECUTANDO):
                     #print("escolheProcesso() escolheu: " + str(esc.filas[i][0]))
@@ -140,10 +121,7 @@ class Sistema():
     #Atualiza o estado de um processo conforme suas demandas por RAM e E/S são atendidas num dado momento.
     def atualizaEstado(self, pr, esc):
         #print("Em atualizaEstado()")
-        #if (pr.pegaId() == "U-1"): print("O ALEMAO TA AQUI: " + str(pr) + ", lista E/S: "+ str(pr.pegaNumDePerifericos()))
-
         if (pr.pegaEstado() == pr.BLOQUEADO): self.alocaESEReorganiza(pr, esc)
-
         if (pr.pegaEstado() == pr.SUSPENSO) or (pr.pegaEstado() == pr.NOVO):
             self.alocaMemoria(pr)
             if (pr.ramFoiAlocada()): self.alocaESEReorganiza(pr, esc)
@@ -163,29 +141,22 @@ class Sistema():
     #Ordena a alocação de dispositivos E/S a um processo e a transferência desse processo entre filas de prioridade.
     def alocaESEReorganiza(self, processo, esc):
         #print("Em alocaESEReorganiza()")
-        #if (processo.pegaId() == "U-1"): print("ALEMAO TA AQUI: " + str(processo))
         #if (processo.pegaEstado() == processo.SUSPENSO): self.listaSuspensos.remove(processo)
         self.requisitaES(processo)
         if (processo.esFoiAlocada()):
-            #if (processo.pegaId() == "U-1"): print("ALEMAO CHEIROU COCA: " + str(processo))
             if (processo.pegaEstado() == processo.BLOQUEADO):
                 if (processo in self.listaBloqueados): self.listaBloqueados.remove(processo)
             processo.setaEstado(processo.PRONTO)
             if (processo not in esc.filas[processo.pegaPrioridade()]): esc.filas[processo.pegaPrioridade()].append(processo)
             if (processo not in self.listaProntos): self.listaProntos.append(processo)
-
-            #print("OS TERCEIRO TÃO LEVANDO TIRO")
             print(processo)
             esc.imprimeFila(esc.filas[processo.pegaPrioridade()], processo.pegaPrioridade())
         else:
-            #print("Proc. bloq.: " + str(processo))
-            #if (processo.pegaEstado() != processo.BLOQUEADO):
-                processo.setaEstado(processo.BLOQUEADO)
-                if (processo not in self.listaBloqueados): self.listaBloqueados.append(processo)
-                if (processo in esc.filas[processo.pegaPrioridade()]): esc.filas[processo.pegaPrioridade()].remove(processo)
-                # for fila in esc.filas[:]:
-                #     if processo in fila[:]:
-                #         fila.remove(processo)
+            # print("Proc. bloq.: " + str(processo))
+            # if (processo.pegaEstado() != processo.BLOQUEADO):
+            processo.setaEstado(processo.BLOQUEADO)
+            if (processo not in self.listaBloqueados): self.listaBloqueados.append(processo)
+            if (processo in esc.filas[processo.pegaPrioridade()]): esc.filas[processo.pegaPrioridade()].remove(processo)
 
     # Aloca memória RAM a um processo.
     def alocaMemoria(self, processo):
@@ -248,8 +219,7 @@ class Sistema():
 
     # Retorna a qtd. de dispositivos E/S livres:
     def dispositivosESLivres(self, cod):
-        if (cod >= 0) and (cod < 4):
-            return self.__maximos[cod] - self.__esUsados[cod]
+        if (cod >= 0) and (cod < 4): return self.__maximos[cod] - self.__esUsados[cod]
 
     # Retorna a qtd. de RAM livre:
     def pegaMemoriaLivre(self):

@@ -27,7 +27,6 @@ class Despachante():
             # separa a string recebida do arquivo para envia-la p/ lista
             separador = re.compile("^\s+|\s*,\s*|\s+$")
             processoAtual = [x for x in separador.split(line) if x]
-            #print(processoAtual)
             novo = proc.Processo(int(processoAtual[0]), int(processoAtual[1]), int(processoAtual[2]), int(processoAtual[3]),
                            int(processoAtual[4]), int(processoAtual[5]), int(processoAtual[6]), int(processoAtual[7]),
                             0, 0, 0, 0)
@@ -69,20 +68,10 @@ class Despachante():
                 elif (pr.pegaPrioridade() == 1): self.fUsuarioP1.append(pr)
                 elif (pr.pegaPrioridade() == 2): self.fUsuarioP2.append(pr)
                 else: self.fUsuarioP3.append(pr)
-
-        #self.fTempoReal.sort(key=lambda x: x.pegaTempoChegada())
-        #self.fUsuarioP1.sort(key=lambda x: x.pegaTempoChegada())
-        #self.fUsuarioP2.sort(key=lambda x: x.pegaTempoChegada())
-        #self.fUsuarioP3.sort(key=lambda x: x.pegaTempoChegada())
-        #self.criaID(self.fTempoReal)
-        #self.criaID(self.fUsuarioP1)
-        #self.criaID(self.fUsuarioP2)
-        #self.criaID(self.fUsuarioP3)
-
-        self.imprimeFila(self.fTempoReal, 0)
-        self.imprimeFila(self.fUsuarioP1, 1)
-        self.imprimeFila(self.fUsuarioP2, 2)
-        self.imprimeFila(self.fUsuarioP3, 3)
+        #self.imprimeFila(self.fTempoReal, 0)
+        #self.imprimeFila(self.fUsuarioP1, 1)
+        #self.imprimeFila(self.fUsuarioP2, 2)
+        #self.imprimeFila(self.fUsuarioP3, 3)
         return self.fTempoReal, self.fUsuarioP1, self.fUsuarioP2, self.fUsuarioP3
 
     def processoDeveSerEnviado(self, pr, tAtual): return pr.pegaTempoChegada() <= tAtual

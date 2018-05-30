@@ -16,7 +16,6 @@ class Escalonador(object):
     def escalona(self, p, tAtual):
         self.tAtual = tAtual
         #print("Entrou no escalona()")
-        #if (p.pegaId() == "U-1"): print("CHEGOU AQUI O CARA: " + str(p))
         if (p.pegaEstado() == p.EXECUTANDO):
             # Atualiza o tempo de execução do processo:
             p.incrementaTempoDeExecucao(1)
@@ -65,7 +64,6 @@ class Escalonador(object):
             for fila in self.filas:
                 if (pr in fila): break
             if pr not in self.filas[self.U3]: self.filas[self.U3].append(pr)
-
         #for i in range(len(self.filas)): self.imprimeFila(self.filas[i], i)
 
     def imprimeFila(self, fila, i):
