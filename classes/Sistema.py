@@ -69,8 +69,8 @@ class Sistema():
     def atualizaProcessos(self, esc):
         for pr in self.listaBloqueados: pr.incrementaTempoTotal(1)
         for pr in self.listaSuspensos: pr.incrementaTempoTotal(1)
-        for fila in esc.filas:
-            for pr in fila:
+        for fila in esc.filas[:]:
+            for pr in fila[:]:
                 pr.incrementaTempoTotal(1)
                 if (pr.pegaEstado() == pr.BLOQUEADO):
                     if pr not in self.listaBloqueados:
@@ -87,24 +87,24 @@ class Sistema():
     def executa(self, esc):
         self.atualizaProcessos(esc)
         proc = self.escolheProcesso(esc)
-        print("Entrou no executa() " + str(proc))
+        #print("Entrou no executa() " + str(proc))
         time.sleep(0.3)
         if (proc != None):
             if (proc.pegaEstado() == proc.EXECUTANDO): proc = esc.escalona(proc, self.__tempoAtual)
             if (proc.pegaEstado() == proc.PRONTO):
-                self.listaProntos.remove(proc)
+                #self.listaProntos.remove(proc)
                 proc.setaEstado(proc.EXECUTANDO)
                 proc.setaTempoInicio(self.__tempoAtual)
-                self.listaExecutando.append(proc)
+                #self.listaExecutando.append(proc)
                 proc = esc.escalona(proc, self.__tempoAtual)
             if (proc.pegaEstado() == proc.TERMINADO):
                 print("Processo " + proc.pegaId() + " terminado\n")
-                self.listaExecutando.remove(proc)
+                #self.listaExecutando.remove(proc)
                 self.desalocaES(proc)
                 self.desalocaMemoria(proc)
                 proc.setaTempoFim(self.__tempoAtual)
                 esc.filas[proc.pegaPrioridade()].remove(proc)
-                self.listaTerminados.append(proc)
+                #self.listaTerminados.append(proc)
         self.__tempoAtual += 1
         return
 
@@ -117,31 +117,23 @@ class Sistema():
                     break
                 if (esc.filas[i][0].pegaEstado() == esc.filas[i][0].PRONTO) or \
                     (esc.filas[i][0].pegaEstado() == esc.filas[i][0].EXECUTANDO): return esc.filas[i][0]
-        for i in range(len(esc.filas)): print(esc.imprimeFila(esc.filas[i], i))
+        #for i in range(len(esc.filas)): esc.imprimeFila(esc.filas[i], i)
         return None
 
     #Atualiza o estado de um processo conforme suas demandas por RAM e E/S são atendidas num dado momento.
     def atualizaEstado(self, pr, esc):
-        if (pr.pegaEstado() == pr.BLOQUEADO):
-            self.requisitaES(pr)
-            if (pr.esFoiAlocada()):
-
-                #esc.filas[pr.pegaPrioridade()].remove(pr)
-
-                self.listaBloqueados.remove(pr)
-                pr.setaEstado(pr.PRONTO)
-                self.listaProntos.append(pr)
+        if (pr.pegaEstado() == pr.BLOQUEADO): self.alocaESEReorganiza(pr, esc)
         if (pr.pegaEstado() == pr.SUSPENSO) or (pr.pegaEstado() == pr.NOVO):
             self.alocaMemoria(pr)
             if (pr.ramFoiAlocada()): self.alocaESEReorganiza(pr, esc)
             if (pr.pegaEstado() == pr.NOVO) and (not pr.ramFoiAlocada()):  # Nesse caso, o processo não pôde ser alocado em RAM e algum processo (provavelmente mais antigo)
                 # deve ser suspenso para que o novo processo pronto seja alocado.
-                for bloq in self.listaBloqueados:
+                for bloq in self.listaBloqueados[:]:
                     if (bloq.pegaMemoriaOcupada() >= pr.pegaMemoriaOcupada()):
-                        self.listaBloqueados.remove(bloq)
+                        #self.listaBloqueados.remove(bloq)
                         self.desalocaMemoria(bloq)
                         bloq.setaEstado(bloq.SUSPENSO)
-                        self.listaSuspensos.append(bloq)
+                        #self.listaSuspensos.append(bloq)
                         self.alocaMemoria(pr)
                         if (pr.ramFoiAlocada()): self.alocaESEReorganiza(pr, esc)
                         break
@@ -152,12 +144,15 @@ class Sistema():
         if (processo.pegaEstado() == processo.SUSPENSO): self.listaSuspensos.remove(processo)
         self.requisitaES(processo)
         if (processo.esFoiAlocada()):
+            if (processo.pegaEstado() == processo.BLOQUEADO): self.listaBloqueados.remove(processo)
             processo.setaEstado(processo.PRONTO)
-            self.listaProntos.append(processo)
+            #self.listaProntos.append(processo)
             esc.filas[processo.pegaPrioridade()].append(processo)
         else:
-            processo.setaEstado(processo.BLOQUEADO)
-            self.listaBloqueados.append(processo)
+            if (processo.pegaEstado() != processo.BLOQUEADO):
+                processo.setaEstado(processo.BLOQUEADO)
+                #self.listaBloqueados.append(processo)
+                esc.filas[processo.pegaPrioridade()].remove(processo)
 
     # Aloca memória RAM a um processo.
     def alocaMemoria(self, processo):

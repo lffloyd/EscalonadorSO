@@ -75,10 +75,10 @@ class Despachante():
         self.criaID(self.fUsuarioP1)
         self.criaID(self.fUsuarioP2)
         self.criaID(self.fUsuarioP3)
-        # print(self.imprimeFila(self.fTempoReal, 0))
-        # print(self.imprimeFila(self.fUsuarioP1, 1))
-        # print(self.imprimeFila(self.fUsuarioP2, 2))
-        # print(self.imprimeFila(self.fUsuarioP3, 3))
+        #self.imprimeFila(self.fTempoReal, 0)
+        #self.imprimeFila(self.fUsuarioP1, 1)
+        #self.imprimeFila(self.fUsuarioP2, 2)
+        #self.imprimeFila(self.fUsuarioP3, 3)
         return self.fTempoReal, self.fUsuarioP1, self.fUsuarioP2, self.fUsuarioP3
 
     def processoDeveSerEnviado(self, pr, tAtual): return pr.pegaTempoChegada() <= tAtual
@@ -100,4 +100,4 @@ class Despachante():
         txt = "Fila "+str(i)+": ["
         for pr in fila:
             txt += str(pr.pegaId()) + ", "
-        return txt + "]"
+        print(txt + "]\n")

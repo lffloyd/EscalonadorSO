@@ -15,7 +15,7 @@ class Escalonador(object):
     #Responsável por escalonar um processo. Emprega "round robin" (fila de TR) e "feedback" (filas de prioridade de usuário) para isso.
     def escalona(self, p, tAtual):
         self.tAtual = tAtual
-        print("Entrou no escalona()")
+        #print("Entrou no escalona()")
         if (p.pegaEstado() == p.EXECUTANDO):
             # Atualiza o tempo de execução do processo:
             p.incrementaTempoDeExecucao(1)
@@ -46,18 +46,25 @@ class Escalonador(object):
 
     def atualizaFilas(self, fTReal, fUs1, fUs2, fUs3):
         for pr in fTReal:
+            for fila in self.filas:
+                if (pr in fila): break
             if pr not in self.filas[self.TR]: self.filas[self.TR].append(pr)
         for pr in fUs1:
+            for fila in self.filas:
+                if (pr in fila): break
             if pr not in self.filas[self.U1]: self.filas[self.U1].append(pr)
         for pr in fUs2:
+            for fila in self.filas:
+                if (pr in fila): break
             if pr not in self.filas[self.U2]: self.filas[self.U2].append(pr)
         for pr in fUs3:
+            for fila in self.filas:
+                if (pr in fila): break
             if pr not in self.filas[self.U3]: self.filas[self.U3].append(pr)
-
-        #for i in range(len(self.filas)): print(self.imprimeFila(self.filas[i], i))
+        for i in range(len(self.filas)): self.imprimeFila(self.filas[i], i)
 
     def imprimeFila(self, fila, i):
         txt = "Fila "+str(i)+": ["
         for pr in fila:
             txt += str(pr.pegaId()) + ", "
-        return txt + "]"
+        print(txt + "]\n")
