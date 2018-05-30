@@ -27,7 +27,7 @@ class Despachante():
             # separa a string recebida do arquivo para envia-la p/ lista
             separador = re.compile("^\s+|\s*,\s*|\s+$")
             processoAtual = [x for x in separador.split(line) if x]
-            print(processoAtual)
+            #print(processoAtual)
             novo = proc.Processo(int(processoAtual[0]), int(processoAtual[1]), int(processoAtual[2]), int(processoAtual[3]),
                            int(processoAtual[4]), int(processoAtual[5]), int(processoAtual[6]), int(processoAtual[7]),
                             0, 0, 0, 0)
@@ -55,7 +55,10 @@ class Despachante():
 
     #Organiza as filas/listas de prioridade de processo com base numa lista de entrada contendo todos os processos a serem executados:
     def submeteProcessos(self, tAtual):
-        self.fTempoReal = self.fUsuarioP1 = self.fUsuarioP2 = self.fUsuarioP3 = []
+        self.fTempoReal = []
+        self.fUsuarioP1 = []
+        self.fUsuarioP2 = []
+        self.fUsuarioP3 = []
         for pr in self.fEntrada[:]:
             if (self.processoDeveSerEnviado(pr, tAtual)):
                 self.fEntrada.remove(pr)
@@ -72,6 +75,10 @@ class Despachante():
         self.criaID(self.fUsuarioP1)
         self.criaID(self.fUsuarioP2)
         self.criaID(self.fUsuarioP3)
+        print(self.fTempoReal)
+        print(self.fUsuarioP1)
+        print(self.fUsuarioP2)
+        print(self.fUsuarioP3)
         return self.fTempoReal, self.fUsuarioP1, self.fUsuarioP2, self.fUsuarioP3
 
     def processoDeveSerEnviado(self, pr, tAtual): return pr.pegaTempoChegada() <= tAtual

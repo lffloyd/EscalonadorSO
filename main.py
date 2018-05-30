@@ -54,7 +54,7 @@ class EscDeProcessos:
         self.avisoExe.pack(side=TOP)
 
         #Label que mostra o processo que está sendo executado
-        self.pAtual = Label(self.info, text="Id: --- \nEstado atual: --- \n\nCiclos do processo executados: ---\--- \nMemória consumida (MB): 0")
+        self.pAtual = Label(self.info, text="Id: --- \nEstado atual: --- \n\nCiclos do processo executados: ---/--- \nMemória consumida (MB): 0")
         self.pAtual["font"] = ("Arial", "10")
         #self.pAtual.place(x=500,y=20)
         self.pAtual.pack(side=BOTTOM)
@@ -193,12 +193,13 @@ class EscDeProcessos:
         self.avisoExe["text"] = "Executando " + self.arq + "..." #Mostra o arquivo que está sendo executado
         #self.desp.submeteProcessos(self.sist.pegaTempoAtual())
         #self.desp.submeteProcessos(self.sist.pegaTempoAtual()) #cria as filas de processo
-        print(self.desp.fTempoReal)
+        #print(self.desp.fTempoReal)
         #self.esc = Escalonador(self.desp.pegafTempoReal(), self.desp.pegafUsuarioP1(), self.desp.pegafUsuarioP2(), self.desp.pegafUsuarioP3())
         self.executando = TRUE
-
-    #função que auxilia o loop principal
+        #função que auxilia o loop principal
         self.i = 0
+        return
+
     def atualizaDados(self):
         #atualizadores dos textos
         self.mem["text"] = "Memória usada: "+str(self.sist.pegaRamUsada())+"MB / "+\
@@ -228,9 +229,7 @@ class EscDeProcessos:
         #executa uma iteração do escalonamento
         if (self.executando):
             #self.desp.submeteProcessos(self.sist.pegaTempoAtual())
-
-            if(self.i>=1):
-                self.pAtual["text"] = "Processo Atual: " + str(self.esc.pAtual)
+            if(self.i>=1): self.pAtual["text"] = "Processo Atual: " + str(self.esc.pAtual)
             fTr, fUs1, fUs2, fUs3 = self.desp.submeteProcessos(self.sist.pegaTempoAtual())
             self.esc.atualizaFilas(fTr, fUs1, fUs2, fUs3)
             self.sist.executa(self.esc)

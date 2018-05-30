@@ -23,12 +23,10 @@ class Escalonador(object):
             else:
                 #Filas de prioridade de usuário. Seguem a política de escalonanamento "feedback", usando quantum = 2.
                 if (p.pegaPrioridade() > 0):
-                    executarTroca = False
                     if (p.pegaQuantums() < self.totalQuantums): p.incrementaQuantums(1)
                     else:
                         p.setaQuantums(0)
                         # Define-em em qual fila o processo atual será inserido:
-                        #self.filas[p.pegaPrioridade()].remove(p)
                         self.filas[p.pegaPrioridade()].remove(p)
                         novaPrioridade = (p.pegaPrioridade() % 3) + 1  # Calcula qual será a fila em que o processo será inserido com
                         # base na fila em que ele se encontra atualmente

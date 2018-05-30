@@ -102,6 +102,7 @@ class Sistema():
                 self.listaExecutando.remove(proc)
                 self.listaTerminados.append(proc)
         self.__tempoAtual += 1
+        return
 
     #Escolhe um processo para execução:
     def escolheProcesso(self, esc):
