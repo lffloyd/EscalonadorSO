@@ -15,6 +15,7 @@ class EscDeProcessos:
         #Iniciadores das classes
         self.sist = Sistema()
         self.arq = "processos.txt"
+        #self.desp = None
         self.desp = Despachante(self.arq, self.sist.pegaTotalRam())
         self.esc = Escalonador(2)
         self.termAux = 0
@@ -150,7 +151,7 @@ class EscDeProcessos:
                 "Tempo de início: " + str(i.pegaTempoInicio()) + "\n" + \
                 "Tempo total do processo: " + str(i.pegaTempoTotal()) + "\n" + \
                 "Tempo total suspenso: " + str(i.pegaTempoSuspenso()) + "\n" + \
-                "Estado atual: " + i.printEstado()
+                "Estado atual: " + i.stringEstado()
                 titulo = "Histórico do processo " + i.pegaId()
         Label(win, text=message).pack()
         win.iconbitmap('win.ico')

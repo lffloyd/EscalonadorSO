@@ -16,6 +16,7 @@ class Escalonador(object):
     def escalona(self, p, tAtual):
         self.tAtual = tAtual
         #print("Entrou no escalona()")
+        #if (p.pegaId() == "U-1"): print("CHEGOU AQUI O CARA: " + str(p))
         if (p.pegaEstado() == p.EXECUTANDO):
             # Atualiza o tempo de execução do processo:
             p.incrementaTempoDeExecucao(1)

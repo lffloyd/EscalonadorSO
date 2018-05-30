@@ -62,7 +62,7 @@ class Sistema():
     #Atualiza os tempos totais de duração de todos os processos já submetidos e carrega em RAM processos novos que
     #possam ser carregados::
     def atualizaProcessos(self, esc):
-        print("Em atualizaProcessos()")
+        #print("Em atualizaProcessos()")
 
         for pr in self.listaBloqueados:
             pr.incrementaTempoTotal(1)
@@ -88,7 +88,7 @@ class Sistema():
                 #         self.listaSuspensos.append(pr)
                 self.atualizaEstado(pr, esc)
 
-        for i in range(len(esc.filas)): esc.imprimeFila(esc.filas[i], i)
+        #for i in range(len(esc.filas)): esc.imprimeFila(esc.filas[i], i)
 
         return
 
@@ -99,24 +99,25 @@ class Sistema():
         #print("Entrou no executa() " + str(proc))
         time.sleep(0.3)
         if (proc != None):
-            if (proc.pegaEstado() == proc.EXECUTANDO): proc = esc.escalona(proc, self.__tempoAtual)
+            print(proc)
             if (proc.pegaEstado() == proc.PRONTO):
-                #self.listaProntos.remove(proc)
+                self.listaProntos.remove(proc)
                 proc.setaEstado(proc.EXECUTANDO)
                 proc.setaTempoInicio(self.__tempoAtual)
                 self.listaExecutando.append(proc)
-                proc = esc.escalona(proc, self.__tempoAtual)
+                if (proc.pegaId() == "U-1"): print("CHEGOU AQUI O CARA: " + str(proc))
+                esc.escalona(proc, self.__tempoAtual)
+            if (proc.pegaEstado() == proc.EXECUTANDO): esc.escalona(proc, self.__tempoAtual)
             if (proc.pegaEstado() == proc.TERMINADO):
                 print("Processo " + proc.pegaId() + " terminado\n")
                 self.listaExecutando.remove(proc)
-
                 self.desalocaES(proc)
                 self.desalocaMemoria(proc)
                 proc.setaTempoFim(self.__tempoAtual)
-
-                for i in range(len(esc.filas[:])):
-                    if (proc in esc.filas[i]): esc.filas[i].remove(proc)
-                #self.listaTerminados.append(proc)
+                if (proc in esc.filas[proc.pegaPrioridade()]): esc.filas[proc.pegaPrioridade()].remove(proc)
+                #for i in range(len(esc.filas[:])):
+                #    if (proc in esc.filas[i]): esc.filas[i].remove(proc)
+                self.listaTerminados.append(proc)
         self.__tempoAtual += 1
         return
 
@@ -124,28 +125,22 @@ class Sistema():
     def escolheProcesso(self, esc):
         #print("Em escolheProcesso():")
         #for i in range(len(esc.filas)): esc.imprimeFila(esc.filas[i], i)
-
         for i in range(len(esc.filas)):
-
             #print("Índice: " + str(i))
-
             if (len(esc.filas[i]) > 0):
                 # if (esc.filas[i][0].pegaId() == "U-4"):
                 #    print(esc.filas[i][0])
                 #    break
                 if (esc.filas[i][0].pegaEstado() == esc.filas[i][0].PRONTO) or \
                     (esc.filas[i][0].pegaEstado() == esc.filas[i][0].EXECUTANDO):
-
                     #print("escolheProcesso() escolheu: " + str(esc.filas[i][0]))
-
                     return esc.filas[i][0]
         return None
 
     #Atualiza o estado de um processo conforme suas demandas por RAM e E/S são atendidas num dado momento.
     def atualizaEstado(self, pr, esc):
         #print("Em atualizaEstado()")
-
-        if (pr.pegaId() == "U-1"): print("O ALEMAO TA AQUI: " + str(pr) + ", lista E/S: "+ str(pr.pegaNumDePerifericos()))
+        #if (pr.pegaId() == "U-1"): print("O ALEMAO TA AQUI: " + str(pr) + ", lista E/S: "+ str(pr.pegaNumDePerifericos()))
 
         if (pr.pegaEstado() == pr.BLOQUEADO): self.alocaESEReorganiza(pr, esc)
 
@@ -168,25 +163,26 @@ class Sistema():
     #Ordena a alocação de dispositivos E/S a um processo e a transferência desse processo entre filas de prioridade.
     def alocaESEReorganiza(self, processo, esc):
         #print("Em alocaESEReorganiza()")
-
+        #if (processo.pegaId() == "U-1"): print("ALEMAO TA AQUI: " + str(processo))
         #if (processo.pegaEstado() == processo.SUSPENSO): self.listaSuspensos.remove(processo)
         self.requisitaES(processo)
         if (processo.esFoiAlocada()):
+            #if (processo.pegaId() == "U-1"): print("ALEMAO CHEIROU COCA: " + str(processo))
             if (processo.pegaEstado() == processo.BLOQUEADO):
                 if (processo in self.listaBloqueados): self.listaBloqueados.remove(processo)
-
             processo.setaEstado(processo.PRONTO)
             if (processo not in esc.filas[processo.pegaPrioridade()]): esc.filas[processo.pegaPrioridade()].append(processo)
             if (processo not in self.listaProntos): self.listaProntos.append(processo)
 
+            #print("OS TERCEIRO TÃO LEVANDO TIRO")
+            print(processo)
+            esc.imprimeFila(esc.filas[processo.pegaPrioridade()], processo.pegaPrioridade())
         else:
             #print("Proc. bloq.: " + str(processo))
-
             #if (processo.pegaEstado() != processo.BLOQUEADO):
                 processo.setaEstado(processo.BLOQUEADO)
                 if (processo not in self.listaBloqueados): self.listaBloqueados.append(processo)
                 if (processo in esc.filas[processo.pegaPrioridade()]): esc.filas[processo.pegaPrioridade()].remove(processo)
-
                 # for fila in esc.filas[:]:
                 #     if processo in fila[:]:
                 #         fila.remove(processo)

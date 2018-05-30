@@ -32,7 +32,9 @@ class Despachante():
                            int(processoAtual[4]), int(processoAtual[5]), int(processoAtual[6]), int(processoAtual[7]),
                             0, 0, 0, 0)
             if (self.verificaProcesso(novo)): self.fEntrada.append(novo)
-        #self.criaID(self.fEntrada)
+
+        self.fEntrada.sort(key=lambda x: x.pegaTempoChegada())
+        self.criaID(self.fEntrada)
 
     #Verifica se um determinado processo pode ser executado tendo em vista as limitações de hardware da máquina/sistema em questão:
     def verificaProcesso(self, processo):
@@ -48,10 +50,10 @@ class Despachante():
         for i in range(len(fEntrada)):
             if fEntrada[i].pegaPrioridade() == 0:
                 self.trEnviados += 1
-                fEntrada[i].setaId('TR-' + str(self.trEnviados))
+                fEntrada[i].setaId("TR-" + str(self.trEnviados))
             else:
                 self.usEnviados += 1
-                fEntrada[i].setaId('U-' + str(self.usEnviados))
+                fEntrada[i].setaId("U-" + str(self.usEnviados))
 
     #Organiza as filas/listas de prioridade de processo com base numa lista de entrada contendo todos os processos a serem executados:
     def submeteProcessos(self, tAtual):
@@ -67,19 +69,20 @@ class Despachante():
                 elif (pr.pegaPrioridade() == 1): self.fUsuarioP1.append(pr)
                 elif (pr.pegaPrioridade() == 2): self.fUsuarioP2.append(pr)
                 else: self.fUsuarioP3.append(pr)
-        self.fTempoReal.sort(key=lambda x: x.pegaTempoChegada())
-        self.fUsuarioP1.sort(key=lambda x: x.pegaTempoChegada())
-        self.fUsuarioP2.sort(key=lambda x: x.pegaTempoChegada())
-        self.fUsuarioP3.sort(key=lambda x: x.pegaTempoChegada())
-        self.criaID(self.fTempoReal)
-        self.criaID(self.fUsuarioP1)
-        self.criaID(self.fUsuarioP2)
-        self.criaID(self.fUsuarioP3)
 
-        #self.imprimeFila(self.fTempoReal, 0)
-        #self.imprimeFila(self.fUsuarioP1, 1)
-        #self.imprimeFila(self.fUsuarioP2, 2)
-        #self.imprimeFila(self.fUsuarioP3, 3)
+        #self.fTempoReal.sort(key=lambda x: x.pegaTempoChegada())
+        #self.fUsuarioP1.sort(key=lambda x: x.pegaTempoChegada())
+        #self.fUsuarioP2.sort(key=lambda x: x.pegaTempoChegada())
+        #self.fUsuarioP3.sort(key=lambda x: x.pegaTempoChegada())
+        #self.criaID(self.fTempoReal)
+        #self.criaID(self.fUsuarioP1)
+        #self.criaID(self.fUsuarioP2)
+        #self.criaID(self.fUsuarioP3)
+
+        self.imprimeFila(self.fTempoReal, 0)
+        self.imprimeFila(self.fUsuarioP1, 1)
+        self.imprimeFila(self.fUsuarioP2, 2)
+        self.imprimeFila(self.fUsuarioP3, 3)
         return self.fTempoReal, self.fUsuarioP1, self.fUsuarioP2, self.fUsuarioP3
 
     def processoDeveSerEnviado(self, pr, tAtual): return pr.pegaTempoChegada() <= tAtual
