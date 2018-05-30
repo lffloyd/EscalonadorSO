@@ -75,6 +75,7 @@ class Despachante():
         self.criaID(self.fUsuarioP1)
         self.criaID(self.fUsuarioP2)
         self.criaID(self.fUsuarioP3)
+
         #self.imprimeFila(self.fTempoReal, 0)
         #self.imprimeFila(self.fUsuarioP1, 1)
         #self.imprimeFila(self.fUsuarioP2, 2)
