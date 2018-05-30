@@ -20,6 +20,7 @@ class EscDeProcessos:
         self.esc = Escalonador(2)
         self.termAux = 0
         self.pausado = FALSE
+        self.tProcessos = 0
 
         #1º container
         self.menu = Frame(master)
@@ -119,6 +120,9 @@ class EscDeProcessos:
                              text="Drives de CD disponíveis: " + str(self.sist.dispositivosESLivres(3)))
         self.cdDisp.place(x=10, y=85)
         #self.cdDisp.pack()
+        self.totalProcessos = Label(master,
+                            text="Processos executados: 0 / " + str(self.tProcessos))
+        self.totalProcessos.place(x=10, y=105)
 
         # Botão para fechar o sistema
         self.sair = Button(master, text="Sair")
@@ -191,6 +195,8 @@ class EscDeProcessos:
 
     #função relacionada ao botão de executar o sistema
     def escalonarProcessos(self, event):
+        self.tProcessos = len(self.desp.fEntrada)
+        self.totalProcessos["text"] = "Processos executados: " + str(len(self.sist.listaTerminados)) + "/" + str(self.tProcessos)
         self.avisoExe["text"] = "Executando " + self.arq + "..." #Mostra o arquivo que está sendo executado
         #self.desp.submeteProcessos(self.sist.pegaTempoAtual())
         #self.desp.submeteProcessos(self.sist.pegaTempoAtual()) #cria as filas de processo
@@ -235,6 +241,7 @@ class EscDeProcessos:
             self.esc.atualizaFilas(fTr, fUs1, fUs2, fUs3)
             self.sist.executa(self.esc)
             self.i += 1
+            self.totalProcessos["text"] = "Processos executados: " + str(len(self.sist.listaTerminados)) + "/" + str(self.tProcessos)
         root.update()
         global AFTER
         AFTER = root.after(100, self.atualizaDados)

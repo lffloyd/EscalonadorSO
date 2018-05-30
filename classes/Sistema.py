@@ -84,7 +84,7 @@ class Sistema():
         self.atualizaProcessos(esc)
         proc = self.escolheProcesso(esc)
         #print("Entrou no executa() " + str(proc))
-        time.sleep(0.3)
+        time.sleep(0.15)
         if (proc != None):
             print(proc)
             if (proc.pegaEstado() == proc.PRONTO):
@@ -125,17 +125,18 @@ class Sistema():
         if (pr.pegaEstado() == pr.SUSPENSO) or (pr.pegaEstado() == pr.NOVO):
             self.alocaMemoria(pr)
             if (pr.ramFoiAlocada()): self.alocaESEReorganiza(pr, esc)
-            # if (pr.pegaEstado() == pr.NOVO) and (not pr.ramFoiAlocada()):  # Nesse caso, o processo não pôde ser alocado em RAM e algum processo (provavelmente mais antigo)
-            #     # deve ser suspenso para que o novo processo pronto seja alocado.
-            #     for bloq in self.listaBloqueados[:]:
-            #         if (bloq.pegaMemoriaOcupada() >= pr.pegaMemoriaOcupada()):
-            #             #self.listaBloqueados.remove(bloq)
-            #             self.desalocaMemoria(bloq)
-            #             bloq.setaEstado(bloq.SUSPENSO)
-            #             #self.listaSuspensos.append(bloq)
-            #             self.alocaMemoria(pr)
-            #             #if (pr.ramFoiAlocada()): self.alocaESEReorganiza(pr, esc)
-            #             break
+
+            if (pr.pegaEstado() == pr.NOVO) and (not pr.ramFoiAlocada()):  # Nesse caso, o processo não pôde ser alocado em RAM e algum processo (provavelmente mais antigo)
+                # deve ser suspenso para que o novo processo pronto seja alocado.
+                for bloq in self.listaBloqueados[:]:
+                    if (bloq.pegaMemoriaOcupada() >= pr.pegaMemoriaOcupada()):
+                        self.listaBloqueados.remove(bloq)
+                        self.desalocaMemoria(bloq)
+                        bloq.setaEstado(bloq.SUSPENSO)
+                        self.listaSuspensos.append(bloq)
+                        self.alocaMemoria(pr)
+                        if (pr.ramFoiAlocada()): self.alocaESEReorganiza(pr, esc)
+                        break
         return pr
 
     #Ordena a alocação de dispositivos E/S a um processo e a transferência desse processo entre filas de prioridade.
