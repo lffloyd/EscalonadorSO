@@ -201,8 +201,7 @@ class Sistema():
                     #for i in range(len(self.__matrizES)):
                     for i in range(len(self.__matrizES[:])):
                         if (listaES[i] != 0):
-                            #if (len(self.__matrizES[i]) > 0):
-                                for j in range(listaES[i]): self.__matrizES[i].remove(processo.pegaId() + "_" + str(j))
+                            for j in range(listaES[i]): self.__matrizES[i].remove(processo.pegaId() + "_" + str(j))
                     processo.setaEstadoAlocacaoES(False)
                     return True, processo
             print("Erro em desalocação de E/S: processo " + processo.pegaId())

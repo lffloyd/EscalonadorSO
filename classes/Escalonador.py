@@ -44,7 +44,23 @@ class Escalonador(object):
         else: return self.filas[self.U3][indice]
 
     def atualizaFilas(self, fTReal, fUs1, fUs2, fUs3):
-        for pr in fTReal: self.filas[self.TR].append(pr)
-        for pr in fUs1: self.filas[self.U1].append(pr)
-        for pr in fUs2: self.filas[self.U2].append(pr)
-        for pr in fUs3: self.filas[self.U3].append(pr)
+        for pr in fTReal:
+            if pr not in self.filas[self.TR]:
+                self.filas[self.TR].append(pr)
+        for pr in fUs1:
+            if pr not in self.filas[self.U1]:
+                self.filas[self.U1].append(pr)
+        for pr in fUs2:
+            if pr not in self.filas[self.U2]:
+                self.filas[self.U2].append(pr)
+        for pr in fUs3:
+            if pr not in self.filas[self.U3]:
+                self.filas[self.U3].append(pr)
+
+        #for i in range(len(self.filas)): print(self.imprimeFila(self.filas[i], i))
+
+    def imprimeFila(self, fila, i):
+        txt = "Fila "+str(i)+": ["
+        for pr in fila:
+            txt += str(pr.pegaId()) + ", "
+        return txt + "]"
