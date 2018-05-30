@@ -223,6 +223,12 @@ class EscDeProcessos:
 
         #executa uma iteração do escalonamento
         if (self.executando):
+            if (self.tProcessos == len(self.sist.listaTerminados)):
+                self.executando = FALSE
+                self.pAtual["text"] = \
+                    "Processo Atual : --- \nEstado atual: --- \n\nCiclos do processo executados: ---/--- " \
+                    "\nMemória consumida (MB): 0"
+
             if(self.esc.pAtual): self.pAtual["text"] = "Processo Atual: " + str(self.esc.pAtual)
             else: self.pAtual["text"] = "Processo Atual : --- \nEstado atual: --- \n\nCiclos do processo executados: ---/--- \nMemória consumida (MB): 0"
             fTr, fUs1, fUs2, fUs3 = self.desp.submeteProcessos(self.sist.pegaTempoAtual())
