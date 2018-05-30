@@ -68,10 +68,6 @@ class Despachante():
                 elif (pr.pegaPrioridade() == 1): self.fUsuarioP1.append(pr)
                 elif (pr.pegaPrioridade() == 2): self.fUsuarioP2.append(pr)
                 else: self.fUsuarioP3.append(pr)
-        #self.imprimeFila(self.fTempoReal, 0)
-        #self.imprimeFila(self.fUsuarioP1, 1)
-        #self.imprimeFila(self.fUsuarioP2, 2)
-        #self.imprimeFila(self.fUsuarioP3, 3)
         return self.fTempoReal, self.fUsuarioP1, self.fUsuarioP2, self.fUsuarioP3
 
     def processoDeveSerEnviado(self, pr, tAtual): return pr.pegaTempoChegada() <= tAtual

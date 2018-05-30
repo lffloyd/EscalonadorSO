@@ -62,28 +62,16 @@ class Sistema():
         for pr in self.listaSuspensos:
             pr.incrementaTempoTotal(1)
             self.atualizaEstado(pr, esc)
-        #esc.imprimeFila(self.listaBloqueados, 66)
-        #esc.imprimeFila(self.listaSuspensos, 67)
         for fila in esc.filas[:]:
             for pr in fila[:]:
                 pr.incrementaTempoTotal(1)
-                # if (pr.pegaEstado() == pr.BLOQUEADO):
-                #     if pr not in self.listaBloqueados:
-                #         esc.filas[pr.pegaPrioridade()].remove(pr)
-                #         self.listaBloqueados.append(pr)
-                # if (pr.pegaEstado() == pr.SUSPENSO):
-                #     if pr not in self.listaSuspensos:
-                #         esc.filas[pr.pegaPrioridade()].remove(pr)
-                #         self.listaSuspensos.append(pr)
                 self.atualizaEstado(pr, esc)
-        #for i in range(len(esc.filas)): esc.imprimeFila(esc.filas[i], i)
         return
 
     #Executa um processo, ordenando que o escalonador orquestre a execução do mesmo:
     def executa(self, esc):
         self.atualizaProcessos(esc)
         proc = self.escolheProcesso(esc)
-        #print("Entrou no executa() " + str(proc))
         time.sleep(0.15)
         if (proc != None):
             print(proc)
@@ -107,25 +95,19 @@ class Sistema():
 
     #Escolhe um processo para execução:
     def escolheProcesso(self, esc):
-        #print("Em escolheProcesso():")
-        #for i in range(len(esc.filas)): esc.imprimeFila(esc.filas[i], i)
         for i in range(len(esc.filas)):
-            #print("Índice: " + str(i))
             if (len(esc.filas[i]) > 0):
                 if (esc.filas[i][0].pegaEstado() == esc.filas[i][0].PRONTO) or \
                     (esc.filas[i][0].pegaEstado() == esc.filas[i][0].EXECUTANDO):
-                    #print("escolheProcesso() escolheu: " + str(esc.filas[i][0]))
                     return esc.filas[i][0]
         return None
 
     #Atualiza o estado de um processo conforme suas demandas por RAM e E/S são atendidas num dado momento.
     def atualizaEstado(self, pr, esc):
-        #print("Em atualizaEstado()")
         if (pr.pegaEstado() == pr.BLOQUEADO): self.alocaESEReorganiza(pr, esc)
         if (pr.pegaEstado() == pr.SUSPENSO) or (pr.pegaEstado() == pr.NOVO):
             self.alocaMemoria(pr)
             if (pr.ramFoiAlocada()): self.alocaESEReorganiza(pr, esc)
-
             if (pr.pegaEstado() == pr.NOVO) and (not pr.ramFoiAlocada()):  # Nesse caso, o processo não pôde ser alocado em RAM e algum processo (provavelmente mais antigo)
                 # deve ser suspenso para que o novo processo pronto seja alocado.
                 for bloq in self.listaBloqueados[:]:
@@ -141,8 +123,6 @@ class Sistema():
 
     #Ordena a alocação de dispositivos E/S a um processo e a transferência desse processo entre filas de prioridade.
     def alocaESEReorganiza(self, processo, esc):
-        #print("Em alocaESEReorganiza()")
-        #if (processo.pegaEstado() == processo.SUSPENSO): self.listaSuspensos.remove(processo)
         self.requisitaES(processo)
         if (processo.esFoiAlocada()):
             if (processo.pegaEstado() == processo.BLOQUEADO):
@@ -153,8 +133,6 @@ class Sistema():
             print(processo)
             esc.imprimeFila(esc.filas[processo.pegaPrioridade()], processo.pegaPrioridade())
         else:
-            # print("Proc. bloq.: " + str(processo))
-            # if (processo.pegaEstado() != processo.BLOQUEADO):
             processo.setaEstado(processo.BLOQUEADO)
             if (processo not in self.listaBloqueados): self.listaBloqueados.append(processo)
             if (processo in esc.filas[processo.pegaPrioridade()]): esc.filas[processo.pegaPrioridade()].remove(processo)

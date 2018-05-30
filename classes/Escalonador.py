@@ -15,7 +15,6 @@ class Escalonador(object):
     #Responsável por escalonar um processo. Emprega "round robin" (fila de TR) e "feedback" (filas de prioridade de usuário) para isso.
     def escalona(self, p, tAtual):
         self.tAtual = tAtual
-        #print("Entrou no escalona()")
         if (p.pegaEstado() == p.EXECUTANDO):
             # Atualiza o tempo de execução do processo:
             p.incrementaTempoDeExecucao(1)
@@ -28,10 +27,8 @@ class Escalonador(object):
                     else:
                         p.setaQuantums(0)
                         # Define-em em qual fila o processo atual será inserido:
-
                         for i in range(len(self.filas[:])):
-                            if p in self.filas[i]:
-                                self.filas[i].remove(p)
+                            if p in self.filas[i]: self.filas[i].remove(p)
                         novaPrioridade = (p.pegaPrioridade() % 3) + 1  # Calcula qual será a fila em que o processo será inserido com
                         # base na fila em que ele se encontra atualmente
                         p.setaPrioridade(novaPrioridade)
@@ -64,7 +61,6 @@ class Escalonador(object):
             for fila in self.filas:
                 if (pr in fila): break
             if pr not in self.filas[self.U3]: self.filas[self.U3].append(pr)
-        #for i in range(len(self.filas)): self.imprimeFila(self.filas[i], i)
 
     def imprimeFila(self, fila, i):
         txt = "Fila "+str(i)+": ["

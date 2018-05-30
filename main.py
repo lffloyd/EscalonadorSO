@@ -56,7 +56,7 @@ class EscDeProcessos:
         self.avisoExe.pack(side=TOP)
 
         #Label que mostra o processo que está sendo executado
-        self.pAtual = Label(self.info, text="Id: --- \nEstado atual: --- \n\nCiclos do processo executados: ---/--- \nMemória consumida (MB): 0")
+        self.pAtual = Label(self.info, text="Processo Atual: --- \nEstado atual: --- \n\nCiclos do processo executados: ---/--- \nMemória consumida (MB): 0")
         self.pAtual["font"] = ("Arial", "10")
         #self.pAtual.place(x=500,y=20)
         self.pAtual.pack(side=BOTTOM)
@@ -89,10 +89,8 @@ class EscDeProcessos:
         self.listasExecutando.pack()
 
         self.terminados = Scrollbar(master)
-        #self.terminados.pack(side=RIGHT, fill=Y)
         self.terminados.place(x=700,y=5)
         self.listboxTerminados = Listbox(master, yscrollcommand=self.terminados.set)
-        #self.listboxTerminados.pack(side=RIGHT)
         self.listboxTerminados.place(x=577, y=5)
         self.terminados.config(command=self.listboxTerminados.yview)
         self.listboxTerminados.insert(END, "Processos terminados:")
@@ -102,16 +100,13 @@ class EscDeProcessos:
         #Funções para mostrar as oscilaões das variáveis do sistema
         self.tempo = Label(master, text="Tempo percorrido: "+str(self.sist.pegaTempoAtual()))
         self.tempo.place(x=10, y=5)
-        #self.tempo.pack()
 
         self.impDisp = Label(master,
                              text="Impressoras disponíveis: " + str(self.sist.dispositivosESLivres(0)))
         self.impDisp.place(x=10, y=25)
-        #self.impDisp.pack()
         self.scnDisp = Label(master,
                              text="Scanners disponíveis: " + str(self.sist.dispositivosESLivres(1)))
         self.scnDisp.place(x=10, y=45)
-        #self.scnDisp.pack()
         self.mdmDisp = Label(master,
                              text="Modems disponíveis: " + str(self.sist.dispositivosESLivres(2)))
         self.mdmDisp.place(x=10, y=65)
@@ -119,9 +114,8 @@ class EscDeProcessos:
         self.cdDisp = Label(master,
                              text="Drives de CD disponíveis: " + str(self.sist.dispositivosESLivres(3)))
         self.cdDisp.place(x=10, y=85)
-        #self.cdDisp.pack()
         self.totalProcessos = Label(master,
-                            text="Processos executados: 0 / " + str(self.tProcessos))
+                            text="Processos executados: 0/" + str(self.tProcessos))
         self.totalProcessos.place(x=10, y=105)
 
         # Botão para fechar o sistema
@@ -130,7 +124,6 @@ class EscDeProcessos:
         self.sair["width"] = 10
         self.sair["command"] = root.destroy
         self.sair.place(x=640,y=455)
-        #self.sair.pack(pady= 10)
 
     def pausar(self):
         if (self.pausado == FALSE):
@@ -196,12 +189,8 @@ class EscDeProcessos:
     #função relacionada ao botão de executar o sistema
     def escalonarProcessos(self, event):
         self.tProcessos = len(self.desp.fEntrada)
-        self.totalProcessos["text"] = "Processos executados: " + str(len(self.sist.listaTerminados)) + "/" + str(self.tProcessos)
+        self.totalProcessos["text"] = "Processos executados: " + str(len(self.sist.listaTerminados)) + " / " + str(self.tProcessos)
         self.avisoExe["text"] = "Executando " + self.arq + "..." #Mostra o arquivo que está sendo executado
-        #self.desp.submeteProcessos(self.sist.pegaTempoAtual())
-        #self.desp.submeteProcessos(self.sist.pegaTempoAtual()) #cria as filas de processo
-        #print(self.desp.fTempoReal)
-        #self.esc = Escalonador(self.desp.pegafTempoReal(), self.desp.pegafUsuarioP1(), self.desp.pegafUsuarioP2(), self.desp.pegafUsuarioP3())
         self.executando = TRUE
         #função que auxilia o loop principal
         self.i = 0
@@ -211,9 +200,6 @@ class EscDeProcessos:
         #atualizadores dos textos
         self.mem["text"] = "Memória usada: "+str(self.sist.pegaRamUsada())+"MB / "+\
                            str(self.sist.pegaTotalRam())+"MB"
-        #self.tempo["text"] = "Tempo percorrido: " + str(self.sist.pegaTempo() / (60*60)) + ":" + \
-        #                     "" + str((self.sist.pegaTempo() % (60*60)) / (60)) + ":" + \
-        #                     "" + str((self.sist.pegaTempo() % (60*60)) % (60))
         self.tempo["text"] = "Tempo percorrido: " + str(self.sist.pegaTempoAtual()) + "s"
 
         self.impDisp["text"] = "Impressoras disponíveis: " + str(self.sist.dispositivosESLivres(0))
@@ -235,8 +221,8 @@ class EscDeProcessos:
 
         #executa uma iteração do escalonamento
         if (self.executando):
-            #self.desp.submeteProcessos(self.sist.pegaTempoAtual())
-            if(self.i>=1): self.pAtual["text"] = "Processo Atual: " + str(self.esc.pAtual)
+            if(self.esc.pAtual): self.pAtual["text"] = "Processo Atual: " + str(self.esc.pAtual)
+            else: self.pAtual["text"] = "Processo Atual : --- \nEstado atual: --- \n\nCiclos do processo executados: ---/--- \nMemória consumida (MB): 0"
             fTr, fUs1, fUs2, fUs3 = self.desp.submeteProcessos(self.sist.pegaTempoAtual())
             self.esc.atualizaFilas(fTr, fUs1, fUs2, fUs3)
             self.sist.executa(self.esc)
