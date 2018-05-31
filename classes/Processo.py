@@ -11,6 +11,7 @@ class Processo(object):
         self.__tInicio = tInicio
         self.__tTotalProcesso = tTotalProcesso
         self.__tTotalSuspenso = tTotalSuspenso
+        self.__tTotalBloqueado = 0
         self.__tTotalExecutandoProcesso = 0
         self.__estado = estado
         self.__id = ""
@@ -159,3 +160,15 @@ class Processo(object):
 
     def pegaTempoSuspenso(self):
         return self.__tTotalSuspenso
+
+    def setaTempoTotal(self, tempo):
+        self.__tTotalProcesso = tempo
+
+    def pegaTempoBloqueado(self):
+        return self.__tTotalBloqueado
+
+    def incrementaTempoSuspenso(self, inc):
+        self.__tTotalSuspenso += inc
+
+    def incrementaTempoBloqueado(self, inc):
+        self.__tTotalBloqueado += inc
