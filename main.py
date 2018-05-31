@@ -56,7 +56,7 @@ class EscDeProcessos:
         self.avisoExe.pack(side=TOP)
 
         #Label que mostra o processo que está sendo executado
-        self.pAtual = Label(self.info, text="Processo Atual: --- \nEstado atual: --- \n\nCiclos do processo executados: ---/--- \nMemória consumida (MB): 0")
+        self.pAtual = Label(self.info, text="Processo Atual: --- \nEstado atual: --- \n\nCiclos do processo executados: --- / --- \nMemória consumida (MB): 0")
         self.pAtual["font"] = ("Arial", "10")
         #self.pAtual.place(x=500,y=20)
         self.pAtual.pack(side=BOTTOM)
@@ -140,7 +140,7 @@ class EscDeProcessos:
                 message ="Tempo de chegada: " + str(i.pegaTempoChegada()) + "\n" + \
                 "Prioridade: " + str(i.pegaPrioridade()) + "\n" + \
                 "Tempo de serviço: " + str(i.pegaTempoDeServico()) + "\n" + \
-                "Memória consumida (MBytes): " + str(i.pegaMemoriaOcupada()) + "\n" + \
+                "Memória consumida (MB): " + str(i.pegaMemoriaOcupada()) + "\n" + \
                 "Impressoras usadas: " + str(i.pegaNumDePerifericos()[0]) + "\n" + \
                 "Scanners usados: " + str(i.pegaNumDePerifericos()[1]) + "\n" + \
                 "Modems usados: " + str(i.pegaNumDePerifericos()[2]) + "\n" + \
@@ -148,6 +148,7 @@ class EscDeProcessos:
                 "Tempo de início: " + str(i.pegaTempoInicio()) + "\n" + \
                 "Tempo total do processo: " + str(i.pegaTempoTotal()) + "\n" + \
                 "Tempo total suspenso: " + str(i.pegaTempoSuspenso()) + "\n" + \
+                "Tempo total bloqueado: " + str(i.pegaTempoBloqueado()) + "\n" + \
                 "Estado atual: " + i.stringEstado()
                 titulo = "Histórico do processo " + i.pegaId()
         Label(win, text=message).pack()
@@ -190,7 +191,9 @@ class EscDeProcessos:
     def escalonarProcessos(self, event):
         self.tProcessos = len(self.desp.fEntrada)
         self.totalProcessos["text"] = "Processos executados: " + str(len(self.sist.listaTerminados)) + " / " + str(self.tProcessos)
-        self.avisoExe["text"] = "Executando " + self.arq + "..." #Mostra o arquivo que está sendo executado
+        self.textoExecutando = str(self.arq).split("/")
+        self.textoExecutando = self.textoExecutando[len(self.textoExecutando)-1]
+        self.avisoExe["text"] = "Executando: " + self.textoExecutando #Mostra o arquivo que está sendo executado
         self.executando = TRUE
         #função que auxilia o loop principal
         self.i = 0
@@ -200,8 +203,6 @@ class EscDeProcessos:
         #atualizadores dos textos
         self.mem["text"] = "Memória usada: "+str(self.sist.pegaRamUsada())+"MB / "+\
                            str(self.sist.pegaTotalRam())+"MB"
-        self.tempo["text"] = "Tempo percorrido: " + str(self.sist.pegaTempoAtual()) + "s"
-
         self.impDisp["text"] = "Impressoras disponíveis: " + str(self.sist.dispositivosESLivres(0))
         self.scnDisp["text"] = "Scanners disponíveis: " + str(self.sist.dispositivosESLivres(1))
         self.mdmDisp["text"] = "Modems disponíveis: " + str(self.sist.dispositivosESLivres(2))
@@ -221,13 +222,19 @@ class EscDeProcessos:
 
         #executa uma iteração do escalonamento
         if (self.executando):
+            self.tempo["text"] = "Tempo percorrido: " + str(self.sist.pegaTempoAtual()) + "s"
             if(self.esc.pAtual): self.pAtual["text"] = "Processo Atual: " + str(self.esc.pAtual)
-            else: self.pAtual["text"] = "Processo Atual : --- \nEstado atual: --- \n\nCiclos do processo executados: ---/--- \nMemória consumida (MB): 0"
+            else: self.pAtual["text"] = "Processo Atual : --- \nEstado atual: --- \n\nCiclos do processo executados: --- / --- \nMemória consumida (MB): 0"
             fTr, fUs1, fUs2, fUs3 = self.desp.submeteProcessos(self.sist.pegaTempoAtual())
             self.esc.atualizaFilas(fTr, fUs1, fUs2, fUs3)
             self.sist.executa(self.esc)
             self.i += 1
             self.totalProcessos["text"] = "Processos executados: " + str(len(self.sist.listaTerminados)) + "/" + str(self.tProcessos)
+
+            if(self.tProcessos == len(self.sist.listaTerminados)):
+                self.executando = FALSE
+                self.pAtual["text"] = "Processo Atual : --- \nEstado atual: --- \n\nCiclos do processo executados: --- / --- \nMemória consumida (MB): 0"
+                self.avisoExe["text"] = "Finalizado "+ self.textoExecutando
         root.update()
         global AFTER
         AFTER = root.after(100, self.atualizaDados)
