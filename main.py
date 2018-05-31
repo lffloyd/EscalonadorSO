@@ -98,7 +98,7 @@ class EscDeProcessos:
 
 
         #Funções para mostrar as oscilaões das variáveis do sistema
-        self.tempo = Label(master, text="Tempo percorrido: "+str(self.sist.pegaTempoAtual()))
+        self.tempo = Label(master, text="Ciclos totais : "+str(self.sist.pegaTempoAtual()))
         self.tempo.place(x=10, y=5)
 
         self.impDisp = Label(master,
@@ -222,7 +222,7 @@ class EscDeProcessos:
 
         #executa uma iteração do escalonamento
         if (self.executando):
-            self.tempo["text"] = "Tempo percorrido: " + str(self.sist.pegaTempoAtual()) + "s"
+            self.tempo["text"] = "Ciclos totais : " + str(self.sist.pegaTempoAtual()) + " ciclos"
             if(self.esc.pAtual): self.pAtual["text"] = "Processo Atual: " + str(self.esc.pAtual)
             else: self.pAtual["text"] = "Processo Atual : --- \nEstado atual: --- \n\nCiclos do processo executados: --- / --- \nMemória consumida (MB): 0"
             fTr, fUs1, fUs2, fUs3 = self.desp.submeteProcessos(self.sist.pegaTempoAtual())
