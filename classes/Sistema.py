@@ -55,15 +55,31 @@ class Sistema():
     #Atualiza os tempos totais de duração de todos os processos já submetidos e carrega em RAM processos novos que
     #possam ser carregados::
     def atualizaProcessos(self, esc):
+        # for pr in self.listaBloqueados:
+        #     pr.incrementaTempoTotal(1)
+        #     pr.incrementaTempoBloqueado(1)
+        #     self.atualizaEstado(pr, esc)
+        # for pr in self.listaSuspensos:
+        #     pr.incrementaTempoTotal(1)
+        #     pr.incrementaTempoSuspenso(1)
+        #     self.atualizaEstado(pr, esc)
+        # for fila in esc.filas[:]:
+        #     for pr in fila[:]:
+        #         pr.incrementaTempoTotal(1)
+        #         self.atualizaEstado(pr, esc)
+
         for pr in self.listaBloqueados:
-            pr.incrementaTempoTotal(1)
-            pr.incrementaTempoBloqueado(1)
+            if pr.pegaEstado == BLOQUEADO:
+                pr.incrementaTempoTotal(1)
+                pr.incrementaTempoBloqueado(1)
         for pr in self.listaSuspensos:
-            pr.incrementaTempoTotal(1)
-            pr.incrementaTempoSuspenso(1)
+            if pr.pegaEstado == SUSPENSO:
+                pr.incrementaTempoTotal(1)
+                pr.incrementaTempoSuspenso(1)
         for fila in esc.filas:
             for pr in fila:
-                pr.incrementaTempoTotal(1)
+                if pr.pegaEstado != TERMINADO:
+                    pr.incrementaTempoTotal(1)
         for pr in self.listaBloqueados: self.atualizaEstado(pr, esc)
         for pr in self.listaSuspensos: self.atualizaEstado(pr, esc)
         for fila in esc.filas:
@@ -75,8 +91,7 @@ class Sistema():
     def executa(self, esc):
         self.atualizaProcessos(esc)
         proc = self.escolheProcesso(esc)
-        #Comentado para que as execuções rodem mais rapidamente.
-        #time.sleep(1)
+        #time.sleep(0.15)
         if (proc != None):
             print(proc)
             if (proc.pegaEstado() == proc.PRONTO):
@@ -92,7 +107,6 @@ class Sistema():
                 self.desalocaES(proc)
                 self.desalocaMemoria(proc)
                 proc.setaTempoFim(self.__tempoAtual)
-                proc.setaTempoTotal(proc.pegaTempoFim() - proc.pegaTempoInicio())
                 if (proc in esc.filas[proc.pegaPrioridade()]): esc.filas[proc.pegaPrioridade()].remove(proc)
                 self.listaTerminados.append(proc)
         self.__tempoAtual += 1
