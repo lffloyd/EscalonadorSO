@@ -158,7 +158,7 @@ class EscDeProcessos:
 
     def CurSelet(self, evt):
         aux = self.listboxTerminados.get(self.listboxTerminados.curselection())
-        if(len(aux)<=4):
+        if(len(aux)<=10):
             self.create_window(aux)
 
     def listasAtuais(self):
